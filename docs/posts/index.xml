@@ -1,0 +1,109 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Posts on Yet another blog...</title>
+        <link>https://pagidas.github.io/posts/</link>
+        <description>Recent content in Posts on Yet another blog...</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+        <lastBuildDate>Sat, 19 Dec 2020 21:37:07 +0200</lastBuildDate>
+        <atom:link href="https://pagidas.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>A very easy-to-wire-up distributed lock solution for scheduled tasks</title>
+            <link>https://pagidas.github.io/posts/shedlock_poc/</link>
+            <pubDate>Sat, 19 Dec 2020 21:37:07 +0200</pubDate>
+            
+            <guid>https://pagidas.github.io/posts/shedlock_poc/</guid>
+            <description>Shedlock is a very well documented library and has already integrated with SpringBoot and Micronaut way of setting a scheduled task. Usually, these kind of frameworks can schedule a task with just simply applying a decorator/annotation like so @Scheduled on top of your java method.
+Deploying a SpringBoot application or a Micronaut (nowadays) into an orchestration platform like Kubernetes usually brings some issues; these scheduled tasks are bound to the container/vm they&amp;rsquo;re running into.</description>
+            <content type="html"><![CDATA[<p><a href="https://github.com/lukas-krecan/ShedLock">Shedlock</a>
+is a very well documented library and has already integrated with
+<a href="https://spring.io/projects/spring-boot">SpringBoot</a>
+and <a href="https://micronaut.io/">Micronaut</a> way of setting a scheduled task.
+Usually, these kind of frameworks can schedule a task with just simply
+applying a decorator/annotation like so <code>@Scheduled</code> on top of your java
+method.</p>
+<p>Deploying a <code>SpringBoot</code> application or a <code>Micronaut</code> (nowadays) into an
+orchestration platform like <em><strong>Kubernetes</strong></em> usually brings some issues;
+these scheduled tasks are bound to the container/vm they&rsquo;re running into.
+Meaning that, if we have <code>3 replicas</code> of that service that executes a
+<code>@Scheduled</code> task, we will experience that task executing <code>3</code> times &ndash; once per <code>replica</code> of a container.</p>
+<p>On a recent task of mine to implement a scheduled task at my work
+which would call a third-party api to:</p>
+<ul>
+<li>fetch some data</li>
+<li>update some other</li>
+<li>and report (after calling again and checking)</li>
+</ul>
+<p>Obviously, we wouldn&rsquo;t want our scheduled task to execute these routines
+as many times as the <code>replica number</code> of the container inside the Kubernetes cluster.
+Hence, a colleague of mine introduced me to <code>Shedlock</code>.</p>
+<p>As mentioned above, <em><strong>Shedlock</strong></em> already has support on <em><strong>SpringBoot</strong></em>
+and <em><strong>Micronaut</strong></em> so to make it work was no pain at all. The only dependency
+required is a <code>DataSource</code> &ndash; a DB, cache, etc. The list of all the datastores
+that it supports is right <a href="https://github.com/lukas-krecan/ShedLock#configure-lockprovider">here</a></p>
+<pre><code>Mongo
+Redis
+ElasticSearch
+Cassandra
+...
+and many more!
+</code></pre><p>On a high level, <em><strong>Shedlock</strong></em> creates an index/table where the <code>id</code> of the scheduled
+task is <em>locked</em>, and it will make sure that only one of the instances
+will execute the scheduled task. Of course, if one of the instances will fail for any reason,
+the lock will be released for the next available!</p>
+<p><img src="./images/shedlock_high_level.png" alt="high_level_architecture_diagram"></p>
+<p><em><strong>Shedlock</strong></em> needs just another <code>annotation</code> on top of your scheduled task as follows in my example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Scheduled</span><span style="color:#f92672">(</span>fixedDelay <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;5s&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#a6e22e">@SchedulerLock</span><span style="color:#f92672">(</span>name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;say-hello-scheduler&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">schedule</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    assertLocked<span style="color:#f92672">();</span>
+    log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Hello from {}&#34;</span><span style="color:#f92672">,</span> App<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">());</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>along with some extra configuration in <code>application.yml</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">shedlock</span>:
+  <span style="color:#f92672">defaults</span>:
+    <span style="color:#f92672">lock-at-most-for</span>: <span style="color:#ae81ff">8s</span>
+    <span style="color:#f92672">lock-at-least-for</span>: <span style="color:#ae81ff">5s</span>
+</code></pre></div><p>Here&rsquo;s the output logs of a demo PoC I did</p>
+<p><img src="./images/proof.png" alt="proof"></p>
+<p>That&rsquo;s it! I hope this blog helped&hellip;</p>
+<p>The repo can be found right here</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">https://github.com/pagidas/shedlock-poc
+</code></pre></div>]]></content>
+        </item>
+        
+        <item>
+            <title>Pilot</title>
+            <link>https://pagidas.github.io/posts/pilot/</link>
+            <pubDate>Sat, 19 Dec 2020 18:07:44 +0200</pubDate>
+            
+            <guid>https://pagidas.github.io/posts/pilot/</guid>
+            <description>We just decided to &amp;ndash; Charlie, The Newsroom, TV Series 2012-2014
+ Well, Charlie was telling his friend, Will, that in the old days they did the news well; how? They just decided to.
+However, I&amp;rsquo;m not going to do any news, nor I will try to teach anything to anybody. I&amp;rsquo;m really new to this. This blog is my attempt to self reflect on the things I&amp;rsquo;m learning throughout my development in software engineering.</description>
+            <content type="html"><![CDATA[<blockquote>
+<p><em>We just decided to &ndash; Charlie, The Newsroom, TV Series 2012-2014</em></p>
+</blockquote>
+<p>Well, <em>Charlie</em> was telling his friend, <em>Will</em>, that in the old days
+they did the news well; how? They just decided to.</p>
+<p>However, I&rsquo;m not going to do any news, nor I will try to teach anything
+to anybody. I&rsquo;m really new to this.
+This blog is my attempt to self reflect on the things I&rsquo;m
+learning throughout my development in software engineering. That does not
+mean I&rsquo;m going to just be talking about tech. I will try to bring other
+aspects of my life as well.</p>
+<hr>
+<p><em>Note to self:</em></p>
+<p>I will try my best and jot down blog posts of thoughts and experiments
+in the tech world.</p>
+<p><em>As I&rsquo;m writing, I&rsquo;m thinking of how this whole <a href="https://gohugo.io/">Hugo</a>
+project is going to be distributed in some corner of the web.</em></p>
+<p>I guess if you ever have the change to read this very blog, means that
+I&rsquo;ve done this successfully! 😌</p>
+]]></content>
+        </item>
+        
+    </channel>
+</rss>
