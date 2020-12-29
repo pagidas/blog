@@ -8,4 +8,4 @@ github actions*
 
 ### Output
 
-Generated static files are located at [here](https://github.com/pagidas/pagidas.github.io)
+Generated static files are located [here](https://github.com/pagidas/pagidas.github.io)
