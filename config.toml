@@ -12,7 +12,7 @@ dateformNum     = "2006-01-02"
 dateformNumTime = "2006-01-02 15:04"
 
 # Subtitle for home
-homeSubtitle = "Temp change"
+homeSubtitle = "Another change"
 
 [[params.social]]
 name = "github"
