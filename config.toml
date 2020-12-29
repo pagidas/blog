@@ -1,5 +1,5 @@
 baseurl      = "https://pagidas.github.io"
-title        = "Yet another blog..."
+title        = "The blog..."
 languageCode = "en-us"
 theme        = "hello-friend-ng"
 paginate     = 10
