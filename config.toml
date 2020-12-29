@@ -1,4 +1,4 @@
-baseurl      = "pagidas.github.io"
+baseurl      = "https://pagidas.github.io"
 title        = "Yet another blog..."
 languageCode = "en-us"
 theme        = "hello-friend-ng"
