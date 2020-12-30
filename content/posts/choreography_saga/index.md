@@ -132,8 +132,6 @@ After ***orders*** publishes a message about the order creation, that's where
 
 ![pantry_logs](./images/pantry_logs.png)
 
-Below we see the logs of the ***
-
 ### Github Repo
 
 My demo ***orchestration saga*** is :point_down:
