@@ -1,5 +1,9 @@
 name: CI
-on: push
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - 'README.md'
 jobs:
   deploy:
     name: Deploy
@@ -22,8 +26,6 @@ jobs:
           personal_token: ${{ secrets.GH_TOKEN }}
           external_repository: pagidas/pagidas.github.io
           publish_dir: ./public
-          #   keep_files: true
           user_name: pagidas
           user_email: pagakrivos@gmail.com
           publish_branch: main
-        #   cname: example.com
