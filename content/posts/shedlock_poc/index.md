@@ -65,6 +65,22 @@ shedlock:
     lock-at-most-for: 8s
     lock-at-least-for: 5s
 ```
+Now the `@Scheduled` expects a `LockProvider` to be declared somewhere. Thus, in my example
+where I used `Elasticsearch` as my datastore, we would have factory bean method like so:
+```java
+@Factory
+public class SchedulingLockConfiguration {
+    
+    @Singleton
+    LockProvider lockProvider(RestHighLevelClient client) {
+        return new ElasticsearchLockProvider(client);
+    }
+}
+```
+In the docs of the library you can find factory bean methods for all the
+datastores that currently the library is integrated and supports to build
+the lock.
+
 Here's the output logs of a demo PoC I did
 
 ![proof](./images/proof.png)
