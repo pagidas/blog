@@ -27,5 +27,5 @@ jobs:
           external_repository: pagidas/pagidas.github.io
           publish_dir: ./public
           user_name: pagidas
-          user_email: pagakrivos@gmail.com
+          user_email: ${{ secrets.GH_USER_EMAIL }}
           publish_branch: main
