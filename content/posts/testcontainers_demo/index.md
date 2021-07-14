@@ -22,7 +22,7 @@ It feels like a `docker-compose` context would be perfect for such testing...
 I hope you know this already, but if you don't, there is a very interesting library 
 wrapping ***Docker*** commands, which we can use to set our environment with docker containers
 ready for our testing. And all that programmatically within our test source code.
-And, yes, of course I'm talking about [Testcontainers](link)
+And, yes, of course I'm talking about [Testcontainers](https://www.testcontainers.org/)
 
 ### My Demo app
 For the sake of this blog post, the demo application I've designed has
@@ -175,6 +175,6 @@ of our application.
 The demo application is located here :point_down:
 
 ```
-https://github.com/
+https://github.com/pagidas/kotlin-testcontainers-demo
 ```
 
