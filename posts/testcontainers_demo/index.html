@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="Lately&amp;hellip; Not a new thing, but lately I&amp;rsquo;ve been trying to focus more on testing the behaviour of an application rather than its implementation details. Those details are variable; so our behavioural test (Integration test?) shouldn&amp;rsquo;t depend on them.
+For example if our application exposes a RESTful CRUD api, storing the resource into some database &amp;ndash; changing the library used to connect to the database and run queries at it, must not change the fact that our application should still behave the same." />
+<meta name="keywords" content=", testcontainers, integration tests, kafka, kafka streams, kafka processor topology" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://pagidas.github.io/posts/testcontainers_demo/" />
+
+
+    <title>
+        
+            Integration tests with testcontainers :: Yet another blog... 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.393856bf2c430bb6c01d7af07c6fe966e7cce8073435cfbbc46e590bab7405ef.css">
+
+
+
+
+
+
+<meta itemprop="name" content="Integration tests with testcontainers">
+<meta itemprop="description" content="Lately&hellip; Not a new thing, but lately I&rsquo;ve been trying to focus more on testing the behaviour of an application rather than its implementation details. Those details are variable; so our behavioural test (Integration test?) shouldn&rsquo;t depend on them.
+For example if our application exposes a RESTful CRUD api, storing the resource into some database &ndash; changing the library used to connect to the database and run queries at it, must not change the fact that our application should still behave the same.">
+<meta itemprop="datePublished" content="2021-06-27T14:15:01&#43;01:00" />
+<meta itemprop="dateModified" content="2021-06-27T14:15:01&#43;01:00" />
+<meta itemprop="wordCount" content="840">
+
+
+
+<meta itemprop="keywords" content="testcontainers,integration tests,kafka,kafka streams,kafka processor topology," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Integration tests with testcontainers"/>
+<meta name="twitter:description" content="Lately&hellip; Not a new thing, but lately I&rsquo;ve been trying to focus more on testing the behaviour of an application rather than its implementation details. Those details are variable; so our behavioural test (Integration test?) shouldn&rsquo;t depend on them.
+For example if our application exposes a RESTful CRUD api, storing the resource into some database &ndash; changing the library used to connect to the database and run queries at it, must not change the fact that our application should still behave the same."/>
+
+
+
+    <meta property="og:title" content="Integration tests with testcontainers" />
+<meta property="og:description" content="Lately&hellip; Not a new thing, but lately I&rsquo;ve been trying to focus more on testing the behaviour of an application rather than its implementation details. Those details are variable; so our behavioural test (Integration test?) shouldn&rsquo;t depend on them.
+For example if our application exposes a RESTful CRUD api, storing the resource into some database &ndash; changing the library used to connect to the database and run queries at it, must not change the fact that our application should still behave the same." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://pagidas.github.io/posts/testcontainers_demo/" />
+<meta property="article:published_time" content="2021-06-27T14:15:01+01:00" />
+<meta property="article:modified_time" content="2021-06-27T14:15:01+01:00" /><meta property="og:site_name" content="Yet another blog..." />
+
+
+
+
+
+
+    <meta property="article:published_time" content="2021-06-27 14:15:01 &#43;0100 &#43;0100" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd ~/</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://pagidas.github.io/about">About</a></li><li><a href="https://pagidas.github.io/posts">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        4 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://pagidas.github.io/posts/testcontainers_demo/">Integration tests with testcontainers</a>
+      </h1>
+
+      
+
+      <div class="post-content">
+        <h3 id="lately">Lately&hellip;</h3>
+<p>Not a new thing, but lately I&rsquo;ve been trying to focus more on testing the behaviour of an
+application rather than its implementation details. Those details are variable; so our
+behavioural test (Integration test?) shouldn&rsquo;t depend on them.</p>
+<p>For example if our application exposes a RESTful CRUD api, storing the resource into
+some database &ndash; changing the library used to connect to the database and run queries at it,
+must not change the fact that our application should still behave the same.</p>
+<p>I&rsquo;m not a fan of <em>mocking</em> external dependencies into my tests, especially if the application
+is heavy on them. I prefer a &ldquo;test through the wire&rdquo;, one that does a real connection.</p>
+<p>It feels like a <code>docker-compose</code> context would be perfect for such testing&hellip;</p>
+<p>I hope you know this already, but if you don&rsquo;t, there is a very interesting library
+wrapping <em><strong>Docker</strong></em> commands, which we can use to set our environment with docker containers
+ready for our testing. And all that programmatically within our test source code.
+And, yes, of course I&rsquo;m talking about <a href="https://www.testcontainers.org/">Testcontainers</a></p>
+<h3 id="my-demo-app">My Demo app</h3>
+<p>For the sake of this blog post, the demo application I&rsquo;ve designed has
+a variety of dependencies that makes it a bit hard to test overall.</p>
+<p>On a high level, we have a <em><strong>streaming application</strong></em> that processes events
+about files which we need to download from an external api, and then save them
+into an <em><strong>AWS S3</strong></em> bucket.</p>
+<p>The technology I used for the application above is <a href="https://kafka.apache.org/">Kafka</a>,
+and specifically I used the <a href="https://kafka.apache.org/10/documentation/streams/developer-guide/processor-api.html">Processor API</a>
+to create a <em><strong>processor topology</strong></em> to represent my business logic.</p>
+<p>For demoing purposes, the external api from which I download the file to continue the flow,
+I used the <a href="https://www.file.io/">file.io</a> &ndash; in reality it could be any third-party provider.</p>
+<h4 id="topology-graph">Topology graph</h4>
+<p>Our <em><strong>topology graph</strong></em> looks like this
+<img src="images/stream_processing_topology_graph.jpg" alt="image"></p>
+<p>Quite simple, right?</p>
+<p>In code, the DSL describing the above topology is even simpler, once you get
+your hands around <em><strong>Kafka</strong></em></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">KafkaStreams(StreamsBuilder().build().run {
+
+            addSource(SOURCE_NODE,
+                LongDeserializer(),
+                UploadFileEventDeserializer(),
+                UploadFileEvent.topic)
+
+            addProcessor(PROCESSOR_NODE,
+                ProcessorSupplier { UploadFileEventProcessor(fileIOApi, s3Config, s3) },
+                SOURCE_NODE)
+
+            addSink(SINK_SUCCESS_NODE,
+                UploadFileSuccessEvent.topic,
+                LongSerializer(),
+                UploadFileEventBaseSerializer(),
+                PROCESSOR_NODE)
+
+            addSink(SINK_FAILURE_NODE,
+                UploadFileFailureEvent.topic,
+                LongSerializer(),
+                UploadFileEventBaseSerializer(),
+                PROCESSOR_NODE)
+    
+    }, <span style="color:#66d9ef">this</span>.kafkaConfig.toProperties())
+</code></pre></div><p>Our business logic lives into this <code>UploadFileEventProcessor</code> instantiated by <em><strong>Kafka&rsquo;s</strong></em> <code>ProcessorSupplier</code>.</p>
+<h4 id="solution-diagram">Solution diagram</h4>
+<p><img src="images/stream_solution_design.jpg" alt="image"></p>
+<h4 id="setting-up-testcontainers">Setting up Testcontainers</h4>
+<p>First is our gradle imports, and <em><strong>Testcontainers</strong></em> thankfully provides us with a <em><strong>bom</strong></em> we can use,
+so we can have the same version across all libraries for no conflicts.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">implementation platform(<span style="color:#e6db74">&#34;org.testcontainers:testcontainers-bom:$testContainersVersion&#34;</span>)
+testImplementation <span style="color:#e6db74">&#34;org.testcontainers:kafka&#34;</span>
+testImplementation <span style="color:#e6db74">&#34;org.testcontainers:mockserver&#34;</span>
+</code></pre></div><p>They do also provide specific containers of widely used technologies to abstract the way we spin them up.</p>
+<p>As seen above <code>org.testcontainers:kafka</code> and <code>org.testcontainers:mockserver</code>.</p>
+<p>For other containers that there is no specific module, we can of course use the <code>GenericContainer</code>
+which works as expected, the same way you&rsquo;d create and run an instance of a docker container.</p>
+<p>There are two ways we can use <em><strong>Testcontainers</strong></em> functionality:</p>
+<ol>
+<li>We can let the library handle the containers&rsquo; lifecycle</li>
+<li>Or we can control it manually.</li>
+</ol>
+<p>For the automated containers&rsquo; lifecycle control, we have to import another module:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">testImplementation <span style="color:#e6db74">&#34;org.testcontainers:junit-jupiter:$junit5Version&#34;</span>
+</code></pre></div><p>This adds some annotations where we can use to declare containers that are maintained by the library &ndash; <code>@Container</code>.</p>
+<p>In our own example I use the manual approach to have singleton containers.
+You can read more about the <em><strong>JUnit5 support</strong></em> <a href="https://www.testcontainers.org/test_framework_integration/junit_5/">here</a> 👈</p>
+<p>To setup singleton containers with manual lifecycle control, we have to follow a <em><strong>base class</strong></em> pattern:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">open</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestContainersBase</span> {
+    <span style="color:#66d9ef">companion</span> <span style="color:#66d9ef">object</span> {
+        <span style="color:#75715e">// declare your containers...
+</span><span style="color:#75715e"></span>        
+        init {
+            <span style="color:#75715e">// start your containers
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// plus whatever is needed for the context to load properly
+</span><span style="color:#75715e"></span>        }
+    }
+}
+</code></pre></div><p>Note how we declare containers that are supported by the framework, and also containers using the <code>GenericContainer</code> type.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> kafkaContainer = KafkaContainer(DockerImageName.parse(<span style="color:#e6db74">&#34;confluentinc/cp-kafka:5.4.3&#34;</span>)).apply { 
+    withExposedPorts(KAFKA_CONTAINER_PORT)
+}
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> mockServerContainer = MockServerContainer(DockerImageName.parse(<span style="color:#e6db74">&#34;mockserver/mockserver&#34;</span>)).apply {
+    withExposedPorts(MOCK_SERVER_CONTAINER_PORT)
+}
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> s3MockContainer = GenericContainer&lt;Nothing&gt;(DockerImageName.parse(<span style="color:#e6db74">&#34;adobe/s3mock&#34;</span>)).apply {
+    withExposedPorts(S3_MOCK_CONTAINER_PORT)
+    withEnv(<span style="color:#e6db74">&#34;initialBuckets&#34;</span>, <span style="color:#e6db74">&#34;file-uploads&#34;</span>)
+}
+</code></pre></div><p>To test that we upload to <em><strong>AWS S3</strong></em> I used <a href="https://github.com/adobe/S3Mock">S3Mock</a>
+but we could use <a href="https://github.com/localstack/localstack">LocalStack</a>.</p>
+<p>Similarly, to test we download the file
+from a third-party api, I used <a href="https://www.mock-server.com/">MockServer</a> but another good alternative is <a href="http://wiremock.org/">Wiremock</a>.
+Both of those solutions we can add pairs of <code>request/response</code> expectations, which sounds like <em>mocking</em>, yet it isn&rsquo;t.
+They both run a real <code>http</code> server.</p>
+<p>Our <code>init {}</code> would simply look like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">init {
+    <span style="color:#75715e">// init containers
+</span><span style="color:#75715e"></span>    kafkaContainer.start()
+    mockServerContainer.start()
+    s3MockContainer.start()
+}
+</code></pre></div><p>Now you may wonder how do we connect to those docker containers when they are started&hellip;</p>
+<p>We already exposed the ports when we declared the containers in the example up above, but those are not the ports that are actually mapped
+into our <code>localhost</code>. Rather, <em><strong>Testcontainers</strong></em> actually exposes them on random free ones to avoid port collisions.</p>
+<p>At runtime, we can ask <em><strong>Testcontainers</strong></em> what is the actual mapped port given the port of the container we declared, like so:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">s3MockContainer.getMappedPort(S3_MOCK_CONTAINER_PORT)
+</code></pre></div><p>As soon as we have the <code>host</code> and <code>port</code> that our docker containers run at, the only thing we are left
+to do is just pass them into our application&rsquo;s config via environment, so we can start testing the behaviour
+of our application.</p>
+<p><img src="images/tests_intellij.png" alt="image"></p>
+<h3 id="github-repo">Github repo</h3>
+<p>The demo application is located here 👇</p>
+<pre><code>https://github.com/pagidas/kotlin-testcontainers-demo
+</code></pre>
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://pagidas.github.io/tags/testcontainers/">testcontainers</a></span>
+        <span class="tag"><a href="https://pagidas.github.io/tags/integration-tests/">integration tests</a></span>
+        <span class="tag"><a href="https://pagidas.github.io/tags/kafka/">kafka</a></span>
+        <span class="tag"><a href="https://pagidas.github.io/tags/kafka-streams/">kafka streams</a></span>
+        <span class="tag"><a href="https://pagidas.github.io/tags/kafka-processor-topology/">kafka processor topology</a></span>
+        
+    </p>
+
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        840 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2021-06-27 13:15
+        
+
+         
+          
+        
+      </p>
+    </div>
+
+    
+      <div class="pagination">
+        <div class="pagination__title">
+          <span class="pagination__title-h">Read other posts</span>
+          <hr />
+        </div>
+
+        <div class="pagination__buttons">
+          
+
+          
+            <span class="button next">
+              <a href="https://pagidas.github.io/posts/choreography_saga/">
+                <span class="button__text">Choreography saga -- asynchronous microservices</span>
+                <span class="button__icon">→</span>
+              </a>
+            </span>
+          
+        </div>
+      </div>
+    
+
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2022</span>
+            
+            
+                <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+            <span><a href="https://pagidas.github.io/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">Djordje Atlialp</a></span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.dc716e9092c9820b77f96da294d0120aeeb189b5bcea9752309ebea27fd53bbe6b13cffb2aca8ecf32525647ceb7001f76091de4199ac5a3caa432c070247f5b.js" integrity="sha512-3HFukJLJggt3&#43;W2ilNASCu6xibW86pdSMJ6&#43;on/VO75rE8/7KsqOzzJSVkfOtwAfdgkd5BmaxaPKpDLAcCR/Ww=="></script>
+
+
+
+    </body>
+</html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Yet another blog...</title>
+    <link>https://pagidas.github.io/</link>
+    <description>Recent content on Yet another blog...</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Sun, 27 Jun 2021 14:15:01 +0100</lastBuildDate>
+    
+	<atom:link href="https://pagidas.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Integration tests with testcontainers</title>
+      <link>https://pagidas.github.io/posts/testcontainers_demo/</link>
+      <pubDate>Sun, 27 Jun 2021 14:15:01 +0100</pubDate>
+      
+      <guid>https://pagidas.github.io/posts/testcontainers_demo/</guid>
+      <description>Lately&amp;hellip; Not a new thing, but lately I&amp;rsquo;ve been trying to focus more on testing the behaviour of an application rather than its implementation details. Those details are variable; so our behavioural test (Integration test?) shouldn&amp;rsquo;t depend on them.
+For example if our application exposes a RESTful CRUD api, storing the resource into some database &amp;ndash; changing the library used to connect to the database and run queries at it, must not change the fact that our application should still behave the same.</description>
+    </item>
+    
+    <item>
+      <title>Choreography saga -- asynchronous microservices</title>
+      <link>https://pagidas.github.io/posts/choreography_saga/</link>
+      <pubDate>Mon, 28 Dec 2020 14:19:33 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/posts/choreography_saga/</guid>
+      <description>Background Well, where to begin&amp;hellip; Saga is a flow of transactions that updates each service and publishes a message to trigger then next transaction step. This pattern is not something new. It came from a paper back in 1987
+On a very high level, Saga does not use a distributed transaction; it breaks down the transaction into a series of local transactions in each one of the participating services.
+Now that microservices architecture is more frequent when orchestrating a system, plain http request/response communication between microservices can be hard to maintain.</description>
+    </item>
+    
+    <item>
+      <title>A very easy-to-wire-up distributed lock solution for scheduled tasks</title>
+      <link>https://pagidas.github.io/posts/shedlock_poc/</link>
+      <pubDate>Sat, 19 Dec 2020 21:37:07 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/posts/shedlock_poc/</guid>
+      <description>Shedlock is a very well documented library and has already integrated with SpringBoot and Micronaut way of setting a scheduled task. Usually, these kind of frameworks can schedule a task with just simply applying a decorator/annotation like so @Scheduled on top of your java method.
+Deploying a SpringBoot application or a Micronaut (nowadays) into an orchestration platform like Kubernetes usually brings some issues; these scheduled tasks are bound to the container/vm they&amp;rsquo;re running into.</description>
+    </item>
+    
+    <item>
+      <title>Pilot</title>
+      <link>https://pagidas.github.io/posts/pilot/</link>
+      <pubDate>Sat, 19 Dec 2020 18:07:44 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/posts/pilot/</guid>
+      <description>We just decided to &amp;ndash; Charlie, The Newsroom, TV Series 2012-2014
+ Well, Charlie was telling his friend, Will, that in the old days they did the news well; how? They just decided to.
+However, I&amp;rsquo;m not going to do any news, nor I will try to teach anything to anybody. I&amp;rsquo;m really new to this. This blog is my attempt to self reflect on the things I&amp;rsquo;m learning throughout my development in software engineering.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://pagidas.github.io/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://pagidas.github.io/about/</guid>
+      <description>About Hello, world! My name is Kostas Akrivos; I&amp;rsquo;m a Software Engineer from Thessaloniki, Greece; currently based in London, UK.
+ I&amp;rsquo;m passionate about technology, and always curious about new tools that help you build a piece of software. I attended a BSc Computer Science in University of Bangor, Wales which I didn&amp;rsquo;t finish in the end. I had other things in mind that time; things I still hold on to in order to keep my creativity juices up.</description>
+    </item>
+    
+  </channel>
+</rss>

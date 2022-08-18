@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="Background Well, where to begin&amp;hellip; Saga is a flow of transactions that updates each service and publishes a message to trigger then next transaction step. This pattern is not something new. It came from a paper back in 1987
+On a very high level, Saga does not use a distributed transaction; it breaks down the transaction into a series of local transactions in each one of the participating services.
+Now that microservices architecture is more frequent when orchestrating a system, plain http request/response communication between microservices can be hard to maintain." />
+<meta name="keywords" content=", async, microservices, sagas, choreography" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://pagidas.github.io/posts/choreography_saga/" />
+
+
+    <title>
+        
+            Choreography saga -- asynchronous microservices :: Yet another blog... 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.393856bf2c430bb6c01d7af07c6fe966e7cce8073435cfbbc46e590bab7405ef.css">
+
+
+
+
+
+
+<meta itemprop="name" content="Choreography saga -- asynchronous microservices">
+<meta itemprop="description" content="Background Well, where to begin&hellip; Saga is a flow of transactions that updates each service and publishes a message to trigger then next transaction step. This pattern is not something new. It came from a paper back in 1987
+On a very high level, Saga does not use a distributed transaction; it breaks down the transaction into a series of local transactions in each one of the participating services.
+Now that microservices architecture is more frequent when orchestrating a system, plain http request/response communication between microservices can be hard to maintain.">
+<meta itemprop="datePublished" content="2020-12-28T14:19:33&#43;02:00" />
+<meta itemprop="dateModified" content="2020-12-28T14:19:33&#43;02:00" />
+<meta itemprop="wordCount" content="865">
+
+
+
+<meta itemprop="keywords" content="async,microservices,sagas,choreography," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Choreography saga -- asynchronous microservices"/>
+<meta name="twitter:description" content="Background Well, where to begin&hellip; Saga is a flow of transactions that updates each service and publishes a message to trigger then next transaction step. This pattern is not something new. It came from a paper back in 1987
+On a very high level, Saga does not use a distributed transaction; it breaks down the transaction into a series of local transactions in each one of the participating services.
+Now that microservices architecture is more frequent when orchestrating a system, plain http request/response communication between microservices can be hard to maintain."/>
+
+
+
+    <meta property="og:title" content="Choreography saga -- asynchronous microservices" />
+<meta property="og:description" content="Background Well, where to begin&hellip; Saga is a flow of transactions that updates each service and publishes a message to trigger then next transaction step. This pattern is not something new. It came from a paper back in 1987
+On a very high level, Saga does not use a distributed transaction; it breaks down the transaction into a series of local transactions in each one of the participating services.
+Now that microservices architecture is more frequent when orchestrating a system, plain http request/response communication between microservices can be hard to maintain." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://pagidas.github.io/posts/choreography_saga/" />
+<meta property="article:published_time" content="2020-12-28T14:19:33+02:00" />
+<meta property="article:modified_time" content="2020-12-28T14:19:33+02:00" /><meta property="og:site_name" content="Yet another blog..." />
+
+
+
+
+
+
+    <meta property="article:published_time" content="2020-12-28 14:19:33 &#43;0200 &#43;0200" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd ~/</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://pagidas.github.io/about">About</a></li><li><a href="https://pagidas.github.io/posts">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        5 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://pagidas.github.io/posts/choreography_saga/">Choreography saga &ndash; asynchronous microservices</a>
+      </h1>
+
+      
+
+      <div class="post-content">
+        <h2 id="background">Background</h2>
+<h3 id="well-where-to-begin">Well, where to begin&hellip;</h3>
+<p><em><strong>Saga</strong></em> is a flow of transactions that updates each service and
+publishes a message to trigger then next transaction step. This pattern
+is not something new. It came from a paper back in <strong>1987</strong></p>
+<p>On a very high level, <em><strong>Saga</strong></em> does not use a <em><strong>distributed transaction</strong></em>;
+it breaks down the transaction into a series of local transactions in each
+one of the participating services.</p>
+<p><img src="./images/saga_transaction.jpg" alt="saga_transaction"></p>
+<p>Now that <em><strong>microservices</strong></em> architecture is more frequent when orchestrating
+a system, plain <code>http request/response</code> communication between microservices can be hard
+to maintain. In fact, it increases <em>coupling</em>, because both of the services
+need to be <em>available</em> at that specific moment for a flow to happen.
+They&rsquo;re bound to the <em>request/response</em> model.</p>
+<h3 id="saga-design-challenges">Saga design challenges</h3>
+<h4 id="api-design">API design</h4>
+<p>Although, a saga internally uses asynchronous communication, the very first step
+that starts the saga might be triggered synchronously, via an <em><strong>http request</strong></em> like so</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-http" data-lang="http"><span style="color:#960050;background-color:#1e0010">P</span><span style="color:#960050;background-color:#1e0010">O</span><span style="color:#960050;background-color:#1e0010">S</span><span style="color:#960050;background-color:#1e0010">T</span><span style="color:#960050;background-color:#1e0010"> </span><span style="color:#960050;background-color:#1e0010">/</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">d</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p>So now we have to cover the issue of <em>when</em> we send back the response.</p>
+<h4 id="implementing-rollbacks">Implementing rollbacks</h4>
+<p>In a <em><strong>distributed transaction</strong></em> you can execute a <code>rollback</code> statement
+that undoes all the updates that have been made so far. But in a saga, given
+that we have <em><strong>local transactions</strong></em> in the services required to execute
+a flow; if one of the steps fails, the steps required before that have already
+committed their changes into their local databases. So we have to explicitly
+undo all that.</p>
+<h4 id="lacking-the-isolation-property-in-acid----acd">Lacking the Isolation property in ACID &ndash; ACD</h4>
+<p>The execution of steps of one saga can interleave with the execution of
+steps of other sagas. That may increase database anomalies such as: <em><strong>dirty reads</strong></em>, etc.
+So we must use countermeasures such as <em><strong>semantic logging</strong></em>, which means
+the <code>state</code> of the <code>Order</code> is <code>PENDING</code> until it becomes <code>APPROVED</code> or <code>REJECTED</code>.</p>
+<h3 id="saga-participants-communication">Saga participants communication</h3>
+<p>As mentioned above, synchronous communication, such as <em><strong>REST</strong></em>, introduces
+<em><strong>temporal coupling</strong></em>, because both client and server need to be available.</p>
+<p>So in sagas it makes more sense to be implemented using
+<em><strong>asynchronous broker-based messaging collaboration</strong></em> where the participants
+communicate through a message broker; that gives us at least once guarantee delivery.</p>
+<p><img src="./images/async_broker_based_messaging.jpg" alt="async_broker_based_messaging"></p>
+<p>If we have those properties, means that even if a saga participant becomes
+unavailable, the message broker is going to keep retrying the delivery of
+that message until the other participant will process it. That guarantees
+the saga will <em><strong>eventually</strong></em> run to completion.</p>
+<h4 id="saga-step">Saga step</h4>
+<p>In such fashion, a saga step is a transaction local to a service.</p>
+<ul>
+<li>Service executes a transaction that updates its database</li>
+<li>And will also send a message or publish an event</li>
+</ul>
+<p>That will trigger the next participant in the saga to execute its own
+local transaction.</p>
+<blockquote>
+<p><em>The interesting thing here is how to make those actions
+in a saga step <em><strong>atomically</strong></em> by not using a <em><strong>distributed transaction</strong></em>.</em></p>
+</blockquote>
+<p><img src="./images/saga_step.jpg" alt="saga_step"></p>
+<h3 id="saga-patterns">Saga patterns</h3>
+<p>A <em><strong>Saga</strong></em> is a sequence of transactions, right? And, mentioned earlier,
+we saw that communication between those transactions are based upon events.
+So the next thought that comes to mind is that, there should be some logic
+somewhere that knows what saga step is executed after another
+&ndash; either a failed or a successful step.</p>
+<p>Here are the two saga patterns based on <em><strong>decision-making</strong></em> aspect:</p>
+<ul>
+<li>Choreography: <em><strong>distributed</strong></em> decision-making</li>
+<li>Orchestration: <em><strong>centralized</strong></em> decision-making</li>
+</ul>
+<p>More details about them <a href="https://microservices.io/patterns/data/saga.html">here</a> 👈</p>
+<h3 id="putting-a-stop-here">Putting a stop here</h3>
+<p>Well this post is not supposed to discuss all the implementation details
+and challenges on how to implement sagas. It would be a book to do that,
+and there are out there already!</p>
+<h2 id="my-demo-app">My demo app</h2>
+<p>I wanted to try to implement a saga on my own, using as much <em><strong>lightweight</strong></em>
+libraries as I could &ndash; to have more control and get more knowledge.</p>
+<p>So the concept is similar to <em><strong>orders-and-customers</strong></em>. The idea is that you
+want to order a <em><strong>pantry_item</strong></em> for which you&rsquo;ve put a quantity limit. For example,
+you can&rsquo;t have more than 4 pieces of broccoli in your pantry at home.</p>
+<p>In that fashion, we have:</p>
+<ul>
+<li>orders</li>
+<li>pantry</li>
+</ul>
+<p><strong>Orders</strong> is the service where you can create/update orders about <strong>pantry_items</strong></p>
+<p><strong>Pantry</strong> is the service that manages if an order about a specific <strong>pantry_item</strong>
+has exceeded its limit or not.</p>
+<p><img src="./images/demo_architecture_design.jpg" alt="demo_architecture_design"></p>
+<h3 id="logs">Logs</h3>
+<p>As seen in the design picture above, the saga starts with a typical
+http request to <em>create a new order</em> The correct way to read the logs is
+to take a look at the <em><strong>pantry logs</strong></em> after reading the in the <em><strong>orders logs</strong></em></p>
+<pre><code>&quot;Pushing to tpic: order-events message: {...}&quot;
+</code></pre><p>After <em><strong>orders</strong></em> publishes a message about the order creation, that&rsquo;s where
+<em><strong>pantry</strong></em> starts its lifecycle, consuming that message.</p>
+<h4 id="orders-service">Orders service</h4>
+<p><img src="./images/orders_logs.png" alt="orders_logs"></p>
+<h4 id="pantry-service">Pantry service</h4>
+<p><img src="./images/pantry_logs.png" alt="pantry_logs"></p>
+<h3 id="github-repo">Github Repo</h3>
+<p>My demo <em><strong>orchestration saga</strong></em> is 👇</p>
+<pre><code>https://github.com/pagidas/kotlin-kafka-choreography-saga
+</code></pre><p>I put as much effort as I could to implement it without using heavyweight frameworks.
+So it&rsquo;s all out there, explicitly, from the <em><strong>kafka consumers/producers</strong></em>, basic
+<em><strong>jdbc</strong></em> for <em><strong>postgresql</strong></em>, up to simple <em><strong>web controllers</strong></em>. The only fancy bit
+might be the use of <em><strong>Kotlin</strong></em> which I find myself playing around with lately.</p>
+<p>I think my demo app, along with the talk I&rsquo;m referencing down below, could be a great start to
+get your hands in <em><strong>sagas</strong></em> and their challenges</p>
+<p>That&rsquo;s it, folks, I hope you enjoyed!</p>
+<h2 id="references">References</h2>
+<p>It&rsquo;s all here! <a href="https://www.youtube.com/watch?v=kyNL7yCvQQc">click me!</a></p>
+<p>An in-depth talk about <em><strong>asynchronous microservices</strong></em> by <em>Chris Richardson</em></p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://pagidas.github.io/tags/async/">async</a></span>
+        <span class="tag"><a href="https://pagidas.github.io/tags/microservices/">microservices</a></span>
+        <span class="tag"><a href="https://pagidas.github.io/tags/sagas/">sagas</a></span>
+        <span class="tag"><a href="https://pagidas.github.io/tags/choreography/">choreography</a></span>
+        
+    </p>
+
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        865 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2020-12-28 12:19
+        
+
+         
+          
+        
+      </p>
+    </div>
+
+    
+      <div class="pagination">
+        <div class="pagination__title">
+          <span class="pagination__title-h">Read other posts</span>
+          <hr />
+        </div>
+
+        <div class="pagination__buttons">
+          
+            <span class="button previous">
+              <a href="https://pagidas.github.io/posts/testcontainers_demo/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Integration tests with testcontainers</span>
+              </a>
+            </span>
+          
+
+          
+            <span class="button next">
+              <a href="https://pagidas.github.io/posts/shedlock_poc/">
+                <span class="button__text">A very easy-to-wire-up distributed lock solution for scheduled tasks</span>
+                <span class="button__icon">→</span>
+              </a>
+            </span>
+          
+        </div>
+      </div>
+    
+
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2022</span>
+            
+            
+                <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+            <span><a href="https://pagidas.github.io/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">Djordje Atlialp</a></span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.dc716e9092c9820b77f96da294d0120aeeb189b5bcea9752309ebea27fd53bbe6b13cffb2aca8ecf32525647ceb7001f76091de4199ac5a3caa432c070247f5b.js" integrity="sha512-3HFukJLJggt3&#43;W2ilNASCu6xibW86pdSMJ6&#43;on/VO75rE8/7KsqOzzJSVkfOtwAfdgkd5BmaxaPKpDLAcCR/Ww=="></script>
+
+
+
+    </body>
+</html>

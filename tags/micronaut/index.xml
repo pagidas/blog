@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>micronaut on Yet another blog...</title>
+    <link>https://pagidas.github.io/tags/micronaut/</link>
+    <description>Recent content in micronaut on Yet another blog...</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Sat, 19 Dec 2020 21:37:07 +0200</lastBuildDate>
+    
+	<atom:link href="https://pagidas.github.io/tags/micronaut/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>A very easy-to-wire-up distributed lock solution for scheduled tasks</title>
+      <link>https://pagidas.github.io/posts/shedlock_poc/</link>
+      <pubDate>Sat, 19 Dec 2020 21:37:07 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/posts/shedlock_poc/</guid>
+      <description>Shedlock is a very well documented library and has already integrated with SpringBoot and Micronaut way of setting a scheduled task. Usually, these kind of frameworks can schedule a task with just simply applying a decorator/annotation like so @Scheduled on top of your java method.
+Deploying a SpringBoot application or a Micronaut (nowadays) into an orchestration platform like Kubernetes usually brings some issues; these scheduled tasks are bound to the container/vm they&amp;rsquo;re running into.</description>
+    </item>
+    
+  </channel>
+</rss>

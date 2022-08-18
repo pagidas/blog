@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Yet another blog...</title>
+    <link>https://pagidas.github.io/tags/</link>
+    <description>Recent content in Tags on Yet another blog...</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Sun, 27 Jun 2021 14:15:01 +0100</lastBuildDate>
+    
+	<atom:link href="https://pagidas.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>integration tests</title>
+      <link>https://pagidas.github.io/tags/integration-tests/</link>
+      <pubDate>Sun, 27 Jun 2021 14:15:01 +0100</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/integration-tests/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kafka</title>
+      <link>https://pagidas.github.io/tags/kafka/</link>
+      <pubDate>Sun, 27 Jun 2021 14:15:01 +0100</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/kafka/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kafka processor topology</title>
+      <link>https://pagidas.github.io/tags/kafka-processor-topology/</link>
+      <pubDate>Sun, 27 Jun 2021 14:15:01 +0100</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/kafka-processor-topology/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kafka streams</title>
+      <link>https://pagidas.github.io/tags/kafka-streams/</link>
+      <pubDate>Sun, 27 Jun 2021 14:15:01 +0100</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/kafka-streams/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>testcontainers</title>
+      <link>https://pagidas.github.io/tags/testcontainers/</link>
+      <pubDate>Sun, 27 Jun 2021 14:15:01 +0100</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/testcontainers/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>async</title>
+      <link>https://pagidas.github.io/tags/async/</link>
+      <pubDate>Mon, 28 Dec 2020 14:19:33 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/async/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>choreography</title>
+      <link>https://pagidas.github.io/tags/choreography/</link>
+      <pubDate>Mon, 28 Dec 2020 14:19:33 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/choreography/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>microservices</title>
+      <link>https://pagidas.github.io/tags/microservices/</link>
+      <pubDate>Mon, 28 Dec 2020 14:19:33 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/microservices/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>sagas</title>
+      <link>https://pagidas.github.io/tags/sagas/</link>
+      <pubDate>Mon, 28 Dec 2020 14:19:33 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/sagas/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>distributed</title>
+      <link>https://pagidas.github.io/tags/distributed/</link>
+      <pubDate>Sat, 19 Dec 2020 21:37:07 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/distributed/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>elasticsearch</title>
+      <link>https://pagidas.github.io/tags/elasticsearch/</link>
+      <pubDate>Sat, 19 Dec 2020 21:37:07 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/elasticsearch/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>lock</title>
+      <link>https://pagidas.github.io/tags/lock/</link>
+      <pubDate>Sat, 19 Dec 2020 21:37:07 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/lock/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>micronaut</title>
+      <link>https://pagidas.github.io/tags/micronaut/</link>
+      <pubDate>Sat, 19 Dec 2020 21:37:07 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/micronaut/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>scheduled</title>
+      <link>https://pagidas.github.io/tags/scheduled/</link>
+      <pubDate>Sat, 19 Dec 2020 21:37:07 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/scheduled/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pilot</title>
+      <link>https://pagidas.github.io/tags/pilot/</link>
+      <pubDate>Sat, 19 Dec 2020 18:07:44 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/tags/pilot/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

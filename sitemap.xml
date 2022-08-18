@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/integration-tests/</loc>
+    <lastmod>2021-06-27T14:15:01+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/posts/testcontainers_demo/</loc>
+    <lastmod>2021-06-27T14:15:01+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/kafka/</loc>
+    <lastmod>2021-06-27T14:15:01+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/kafka-processor-topology/</loc>
+    <lastmod>2021-06-27T14:15:01+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/kafka-streams/</loc>
+    <lastmod>2021-06-27T14:15:01+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/posts/</loc>
+    <lastmod>2021-06-27T14:15:01+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/</loc>
+    <lastmod>2021-06-27T14:15:01+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/testcontainers/</loc>
+    <lastmod>2021-06-27T14:15:01+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/</loc>
+    <lastmod>2021-06-27T14:15:01+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/async/</loc>
+    <lastmod>2020-12-28T14:19:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/choreography/</loc>
+    <lastmod>2020-12-28T14:19:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/posts/choreography_saga/</loc>
+    <lastmod>2020-12-28T14:19:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/microservices/</loc>
+    <lastmod>2020-12-28T14:19:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/sagas/</loc>
+    <lastmod>2020-12-28T14:19:33+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/posts/shedlock_poc/</loc>
+    <lastmod>2020-12-19T21:37:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/distributed/</loc>
+    <lastmod>2020-12-19T21:37:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/elasticsearch/</loc>
+    <lastmod>2020-12-19T21:37:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/lock/</loc>
+    <lastmod>2020-12-19T21:37:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/micronaut/</loc>
+    <lastmod>2020-12-19T21:37:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/scheduled/</loc>
+    <lastmod>2020-12-19T21:37:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/posts/pilot/</loc>
+    <lastmod>2020-12-19T18:07:44+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/tags/pilot/</loc>
+    <lastmod>2020-12-19T18:07:44+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/about/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/blog/</loc>
+  </url>
+  
+  <url>
+    <loc>https://pagidas.github.io/series/</loc>
+  </url>
+  
+</urlset>
