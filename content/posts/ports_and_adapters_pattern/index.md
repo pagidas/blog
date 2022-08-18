@@ -1,7 +1,7 @@
 ---
 title: "Ports and adapters pattern (aka Hexagonal architecture)"
-date: 2021-12-28T17:24:07+02:00
-draft: true
+date: 2021-12-28T17:24:07Z
+draft: false
 tags: ['ports_and_adapters_pattern', 'hexagonal_architecture', 'SOLID_principles']
 ---
 
