@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>async on Yet another blog...</title>
+    <link>https://pagidas.github.io/tags/async/</link>
+    <description>Recent content in async on Yet another blog...</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Mon, 28 Dec 2020 14:19:33 +0200</lastBuildDate><atom:link href="https://pagidas.github.io/tags/async/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Choreography saga -- asynchronous microservices</title>
+      <link>https://pagidas.github.io/posts/choreography_saga/</link>
+      <pubDate>Mon, 28 Dec 2020 14:19:33 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/posts/choreography_saga/</guid>
+      <description>Background Well, where to begin&amp;hellip; Saga is a flow of transactions that updates each service and publishes a message to trigger then next transaction step. This pattern is not something new. It came from a paper back in 1987
+On a very high level, Saga does not use a distributed transaction; it breaks down the transaction into a series of local transactions in each one of the participating services.
+Now that microservices architecture is more frequent when orchestrating a system, plain http request/response communication between microservices can be hard to maintain.</description>
+    </item>
+    
+  </channel>
+</rss>
