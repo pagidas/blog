@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hexagonal_architecture on Yet another blog...</title>
+    <link>https://pagidas.github.io/tags/hexagonal_architecture/</link>
+    <description>Recent content in hexagonal_architecture on Yet another blog...</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Tue, 28 Dec 2021 17:24:07 +0000</lastBuildDate><atom:link href="https://pagidas.github.io/tags/hexagonal_architecture/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ports and adapters pattern (aka Hexagonal architecture)</title>
+      <link>https://pagidas.github.io/posts/ports_and_adapters_pattern/</link>
+      <pubDate>Tue, 28 Dec 2021 17:24:07 +0000</pubDate>
+      
+      <guid>https://pagidas.github.io/posts/ports_and_adapters_pattern/</guid>
+      <description>So it all began when I moved to another team within the same company. This colleague of mine, when I asked him how the team was like, etc, he said to me in the end, &amp;ldquo;we use the hexagonal architecture here, and you&amp;rsquo;ll see how much power it gives you.&amp;rdquo; Back then, I knew little about the SOLID principles, which is an acronym about best practices in OOP, heavily promoted by Uncle Bob.</description>
+    </item>
+    
+  </channel>
+</rss>

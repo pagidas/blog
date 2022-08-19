@@ -1,0 +1,777 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Posts on Yet another blog...</title>
+        <link>https://pagidas.github.io/posts/</link>
+        <description>Recent content in Posts on Yet another blog...</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+        <lastBuildDate>Tue, 28 Dec 2021 17:24:07 +0000</lastBuildDate>
+        <atom:link href="https://pagidas.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Ports and adapters pattern (aka Hexagonal architecture)</title>
+            <link>https://pagidas.github.io/posts/ports_and_adapters_pattern/</link>
+            <pubDate>Tue, 28 Dec 2021 17:24:07 +0000</pubDate>
+            
+            <guid>https://pagidas.github.io/posts/ports_and_adapters_pattern/</guid>
+            <description>So it all began when I moved to another team within the same company. This colleague of mine, when I asked him how the team was like, etc, he said to me in the end, &amp;ldquo;we use the hexagonal architecture here, and you&amp;rsquo;ll see how much power it gives you.&amp;rdquo; Back then, I knew little about the SOLID principles, which is an acronym about best practices in OOP, heavily promoted by Uncle Bob.</description>
+            <content type="html"><![CDATA[<p>So it all began when I moved to another team within the same company.
+This colleague of mine, when I asked him how the team was like, etc, he said
+to me in the end, &ldquo;we use the hexagonal architecture here, and you&rsquo;ll see
+how much power it gives you.&rdquo; Back then, I knew little about the
+<a href="https://en.wikipedia.org/wiki/SOLID"><strong><em>SOLID</em></strong></a> principles, which
+is an acronym about best practices in OOP, heavily promoted by
+<a href="http://cleancoder.com/products">Uncle Bob</a>.
+Not a long later, I found out how all of these so-called
+best practices were mentioned back in the 1970s.</p>
+<p>The ports and adapters pattern is an architectural pattern invented by
+<a href="https://alistair.cockburn.us/coming-soon/">Alistair Cockburn</a>;
+you can read all about it <a href="https://alistair.cockburn.us/hexagonal-architecture/">here</a> 👈
+It aims at creating loosely coupled application components, that can fix
+undesired dependencies, and domain logic leaking into the user interface
+and vice-versa.</p>
+<h2 id="glossary">Glossary</h2>
+<p><strong><em>Hexagon</em></strong> is our core domain logic that should be isolated from
+the outside world. It should ideally contain no technology-specific
+dependencies; only very lightweight libraries that help with the complexity
+of the domain.</p>
+<p><strong><em>Ports</em></strong> are the interfaces defined, with their respective models,
+to separate the application components.</p>
+<p><strong><em>Adapters</em></strong> are the components that adapt the technology to the interface (port).</p>
+<p>There are at two types of ports, as well as adapters.</p>
+<ul>
+<li><strong><em>Driving</em></strong> ports: interfaces defining how the application is triggered.</li>
+<li><strong><em>Driven</em></strong> ports: interfaces defining how the application communicates with
+the external world.</li>
+</ul>
+<p>In the above fashion, the same goes with the driving/driven adapters</p>
+<p>In a nutshell, we have our <strong><em>hexagon</em></strong> (domain logic) component which
+we want to isolate from the outside world via well-defined <strong><em>ports</em></strong> (interfaces),
+which are then implemented/used by <strong><em>adapter</em></strong> components.</p>
+<blockquote>
+<p><em>Note that the above statement does not encompass all, so make sure you read
+the link to the original pattern if questions arise.</em></p>
+</blockquote>
+<h2 id="how-it-relates-to-solid">How it relates to SOLID</h2>
+<p>The ports and adapters pattern enforces one the <strong><em>SOLID</em></strong> principles due
+to its glossary. <strong><em>Dependency Inversion</em></strong> principle, which states</p>
+<blockquote>
+<p><em>High-level modules should not depend on low-level modules; both should
+depend on abstractions. Abstractions should not depend on details; details
+should depend on abstractions.</em></p>
+</blockquote>
+<p>One thing to clarify is that the dependency direction is not affected when
+applying the above principle; but, because of introducing an abstraction between them,
+we end up with two different dependencies.</p>
+<ul>
+<li>the high-level module depends on the abstraction.</li>
+<li>the low-level module depends on <strong><em>that same</em></strong> abstraction.</li>
+</ul>
+<p>The dependency inversion principle follows naturally when we
+apply <strong><em>Open/closed</em></strong> and the <strong><em>Liskov substitution</em></strong> principles.</p>
+<p>The <strong><em>Open/closed</em></strong> principle requires a software component to be open for
+extension and closed for modification. We can achieve that by introducing an
+abstraction for which we can derive different components. An interface itself
+is closed for modification, but we can extend it by providing new implementations.</p>
+<p>Our implementations on the above principle should follow the <strong><em>Liskov substitution</em></strong>
+principle so that we can replace implementations of an abstraction without
+affecting the behaviour of the application. We can verify this principle when
+our tests exercise the <strong><em>behaviour</em></strong> and not implementation details.</p>
+<h2 id="building-an-application">Building an application</h2>
+<p>Let&rsquo;s try and build an application to understand more about the pattern.
+The theme of the application will be a sort of card wallet software, which can:</p>
+<ul>
+<li>create a wallet</li>
+<li>list all wallets</li>
+<li>add a pass*</li>
+<li>debit a pass*</li>
+</ul>
+<p><code>Pass</code>* - a pass for this example is like those club cards in a super-market containing points.</p>
+<h3 id="design-phase">Design phase</h3>
+<p>My initial attempt to draw out the application ended up quite ineffective, but we are here
+to learn, so I will include them in order to express my thoughts.</p>
+<p><img src="images/initial_design.png" alt="image"></p>
+<p>Now for &ldquo;architectural design&rdquo; <strong><em>V1</em></strong>, there is not really <em>any</em> architecture.
+Not only that but I stared at it confusingly, thinking of what will be my next steps,
+until I had reached to a point where I started adding things that became my <strong><em>V2</em></strong>.</p>
+<p>I see this <strong><em>WebController</em></strong> that makes me think that there is some kind of web
+technology that is associated to the <strong><em>CardWalletLogic</em></strong>. Ok, maybe it <em>uses</em>
+the logic component. So this is probably an HTTP component that when called
+it uses the logic component, which is supposed to be our main application. Then
+we have another thing there, <strong><em>DB</em></strong> which is <em>used</em> by our <strong><em>CardWalletLogic</em></strong>,
+reading/writing data to complete the functionality.</p>
+<p><strong><em>V2</em></strong> seems to be like an architectural design, but the thing that bothers me
+is that out of my confusion, I took technology decisions, only because of my
+inability to continue on designing the application. I also had thoughts on
+how would I test this out; I would need an HTTP server running,
+or I would mock it out; have a db up and running, or again mock it out.
+All in all, I felt I did not have a design that would help me start coding.</p>
+<p>With a bit more focus on the ports and adapters pattern, I came up with the next
+version of the design.</p>
+<p><img src="images/abstractions_design.png" alt="image"></p>
+<p>Trying to make sense of the pattern, I drew two interfaces
+(ports in the glossary of the pattern)</p>
+<ul>
+<li><code>CardWalletPort</code> - driving port.</li>
+<li><code>CardWalletStorage</code> - driven port.</li>
+</ul>
+<p>One that defines how to communicate with the card wallet domain component,
+and one that the domain <em>uses</em> to finish the functionality.
+That leaves us with <code>CardWalletLogic</code> to be an implementation detail,
+which is <em>derived</em> from the interface that defines the shape of
+the domain logic component(the hexagon).</p>
+<blockquote>
+<p><em>For those who do not know already, the filled arrow is a derived association
+(extends) and the empty arrow is a direct association (uses, has, etc.).</em></p>
+</blockquote>
+<p>With this design, I felt much more confident. It also reminded me that
+regardless of what things are out of both interfaces (ports)
+I could safely - and I ought to - start implementing the behaviour
+of the card wallet domain first.</p>
+<p>But I did not, yet!</p>
+<p>My curiosity of my previous mistakes wanted me to
+try and visualize the design with both the abstractions and the technology
+choices I made in the last version.</p>
+<p><img src="images/not_clear_boundaries_design.png" alt="image"></p>
+<p>It took a bit of time to draw out the correct associations, but I made it.</p>
+<ul>
+<li><code>CardWalletWebController</code> - driving adapter.</li>
+<li><code>DatabaseApi</code> - driven adapter.</li>
+</ul>
+<p><code>CardWalletWebController</code> wraps the card wallet domain component
+via the port, which means it <em>has an instance</em> of that interface,
+and adapts HTTP-specific things to it. This is called an adapter
+in the ports and adapters pattern, because it uses the
+<em>adapter software design pattern</em>. Simple, right?
+The other adapter is the <code>DatabaseApi</code> which derives from the
+dependency port of card wallet domain component, adapting domain
+logic into database-specific, acting as the depepdency port itself.</p>
+<p>Another thing that I struggled to grasp is that the pattern talks about
+<em>loosely coupled application components that stop undesired dependencies,
+and contamination of domain logic into the user interface and vice-versa</em>.
+From my last version of the design, I could definitely see the &ldquo;loosely coupling&rdquo;
+being introduced because of the abstractions in place (ports). What I could not
+clearly depict, was the <em>components</em>. There was no clear separation of components,
+i.e. component modularity.</p>
+<p><img src="images/boundaries_design.png" alt="image"></p>
+<p>In the (hopefully) last design version, I attempted to clearly
+place the boundaries so that I could understand the dependencies.
+The design depicts three components:</p>
+<ul>
+<li>the card wallet domain component (hexagon)</li>
+<li>the HTTP adapter component (driving adapter)</li>
+<li>the database adapter component (driven adapter)</li>
+</ul>
+<p>These three components should ideally be three separate modules with their
+own local concerns and dependencies. The design implies that whatever
+changes may happen to adapter modules will not affect the domain module (hexagon).
+This information is understood by the arrowed lines that, crossing the boundaries,
+they point to the same direction, to the most important part of the system.
+The domain logic. The high-level module, card wallet domain, does not directly
+depend on the low-level modules, the adapters, but on abstractions.
+Also, the low-level modules do not directly depend on the high-level module&rsquo;s
+implementation details, but on the domain api.</p>
+<h3 id="coding-phase">Coding phase</h3>
+<p>Let us start by defining the port responsible to talk to our domain component.</p>
+<p>We will focus on the wallet creation capability of the application; but
+we can pair it with the list all wallets functionality so that we can test
+the behaviour solely via the interface.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CardWalletPort</span> {
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">createWallet</span>(walletHolder: String): Wallet
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">list</span>(): List&lt;Wallet&gt;
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletLogicTest</span> {
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort = TODO()
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can create a wallet`</span>() {
+        <span style="color:#66d9ef">val</span> created = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+
+        <span style="color:#66d9ef">val</span> wallets = cardWallet.list()
+
+        assertThat(wallets, equalTo(listOf(created)))
+    }
+}
+</code></pre></div><p>If we remember the ports and adapters pattern, it defines:</p>
+<ul>
+<li>driving ports/adapters</li>
+<li>driven ports/adapters</li>
+</ul>
+<p>The test we wrote in the above block of code, is essentially a
+<strong><em>driving adapter</em></strong>; it drives/triggers the domain logic component.
+It is &ldquo;driving&rdquo; because it targets the driving port, and &ldquo;adapter&rdquo; because it
+asserts the interface is behaving correctly, by running the framework&rsquo;s rules
+engine upon results when delegating calls to the interface.</p>
+<p>Now that we have defined the functionality in the port and a 💥 failing test
+ready to go; let us start implementing the hexagon.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletLogic</span>(
+  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> cardWalletStorage: CardWalletStorage): CardWalletPort {
+  
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">createWallet</span>(walletHolder: String): Wallet =
+        WalletDomain.empty(UUID.randomUUID(), walletHolder)
+            .toDto()
+            .also { newWallet <span style="color:#f92672">-&gt;</span> cardWalletStorage.save(newWallet) }
+
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">list</span>(): List&lt;Wallet&gt; = cardWalletStorage.getAll()
+}
+
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CardWalletStorage</span> {
+  <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">save</span>(wallet: Wallet): Wallet
+  <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">getAll</span>(): List&lt;Wallet&gt;
+}
+</code></pre></div><blockquote>
+<p><em>For simplicity, internals of <code>CardWalletLogic</code> are not included in the demo
+(there will be a link to the GitHub repository)</em></p>
+</blockquote>
+<p>For creating a wallet, we have decided to persist the results into some storage;
+and so we define a driven port as it is an external concern.</p>
+<p><code>toDto()</code> function maps the domain object&rsquo;s model to a data transfer model. This
+is crucial, so we do not end up leaking domain knowledge out of the hexagon.
+If we have a rich domain, and we choose to spread it across domain
+objects, those models must not be part of the api (driving or driven ports),
+rather they should be implementation details of the very hexagon.
+That leaves us using simple data structures for entering or exiting the hexagon.</p>
+<p>Of course, we now need to verify that the domain logic we have coded complies
+with the test we have written in the beginning. The test exercises the behaviour
+of the wallet creation functionality.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletLogicTest</span> {
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort =
+      CardWalletLogic(InMemoryCardWalletStorage())
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can create a wallet`</span>() {
+        <span style="color:#66d9ef">val</span> created = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+
+        <span style="color:#66d9ef">val</span> wallets = cardWallet.list()
+
+        assertThat(wallets, equalTo(listOf(created)))
+    }
+}
+</code></pre></div><p>Our test is green ✅ 🎉</p>
+<p>Because at this point we are just focusing on the business domain, we have added an
+in-memory storage implementation, <code>InMemoryCardWalletStorage</code>, for the driven port.</p>
+<p>Now it is simply a matter of implementing all the rest of capabilities our
+domain application is supposed to do.</p>
+<p><strong><em>TDD intensifies&hellip;</em></strong></p>
+<p><strong><em>fast-forward some time later&hellip;</em></strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletLogicTest</span>() {
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort = 
+        CardWalletLogic(InMemoryCardWalletStorage())
+  
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can create a wallet`</span>() {
+        <span style="color:#66d9ef">val</span> created = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+
+        <span style="color:#66d9ef">val</span> wallets = cardWallet.list()
+
+        assertThat(wallets, equalTo(listOf(created)))
+    }
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can add a pass to a wallet`</span>() {
+        <span style="color:#66d9ef">val</span> wallet = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+        <span style="color:#66d9ef">val</span> newPass = PassBuilder().build()
+
+        <span style="color:#66d9ef">val</span> updatedWallet = cardWallet.addPass(wallet.id, newPass)
+        <span style="color:#66d9ef">val</span> foundPass = updatedWallet.passes.find { <span style="color:#66d9ef">it</span>.id <span style="color:#f92672">==</span> newPass.id }
+
+        assertThat(foundPass, equalTo(newPass))
+    }
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can get wallet by id`</span>() {
+        <span style="color:#66d9ef">val</span> existed = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+
+        <span style="color:#66d9ef">val</span> found = cardWallet.getWalletById(existed.id)
+
+        assertThat(found, equalTo(existed))
+    }
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can debit pass points`</span>() {
+        <span style="color:#66d9ef">val</span> pass = PassBuilder(points = <span style="color:#ae81ff">70</span>).build()
+        <span style="color:#66d9ef">val</span> wallet = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+            .run { cardWallet.addPass(id, pass) }
+
+        <span style="color:#66d9ef">val</span> result =  cardWallet.debitPass(wallet.id, pass.id, <span style="color:#ae81ff">50</span>)
+
+        assertThat((result.<span style="color:#66d9ef">get</span>() <span style="color:#66d9ef">as</span> Pass).points, equalTo(<span style="color:#ae81ff">20</span>))
+    }
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can not debit more than balance`</span>() {
+        <span style="color:#66d9ef">val</span> pass = PassBuilder(points = <span style="color:#ae81ff">50</span>).build()
+        <span style="color:#66d9ef">val</span> wallet = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+            .run { cardWallet.addPass(id, pass) }
+
+        <span style="color:#66d9ef">val</span> result =  cardWallet.debitPass(wallet.id, pass.id, <span style="color:#ae81ff">51</span>)
+
+        <span style="color:#66d9ef">val</span> error = WalletErrorBuilder.ofPass(pass)
+            .withNotEnoughPointsIssue(debitAmount = <span style="color:#ae81ff">51</span>, balance = <span style="color:#ae81ff">50</span>)
+            .build()
+        assertThat(result.<span style="color:#66d9ef">get</span>() <span style="color:#66d9ef">as</span> WalletError, equalTo(error))
+    }
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can not debit pass when not found`</span>() { 
+      <span style="color:#66d9ef">val</span> wallet = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+      <span style="color:#66d9ef">val</span> pass = PassBuilder(points = <span style="color:#ae81ff">50</span>).build()
+    
+      <span style="color:#66d9ef">val</span> result = cardWallet.debitPass(wallet.id, pass.id, <span style="color:#ae81ff">50</span>)
+    
+      <span style="color:#66d9ef">val</span> error = WalletErrorBuilder.ofPass(pass)
+          .withPassNotFoundIssue()
+          .build()
+      assertThat(result.<span style="color:#66d9ef">get</span>() <span style="color:#66d9ef">as</span> WalletError, equalTo(error))
+    }
+}
+</code></pre></div><p>We have managed to build all the card wallet domain application functionalities,
+with a mixture of happy and unhappy path scenarios passing ✅ 🎉</p>
+<p>Implementing the rest of the modules (driving and driven adapters) are not demonstrated
+since the essence of this demo is to focus on the domain first of all.</p>
+<h3 id="testing-strategy">Testing strategy</h3>
+<p>Since the architectural pattern guides as in terms of putting the right abstractions
+in place; we can extend this even to our testing approach. We can define the test
+suite as another abstraction that implementors (driving/driven adapters in our case)
+can construct the system under test (SUT) in whatever ways, exercising that with the
+given adapting technologies the api still behaves as it supposed to be.</p>
+<p>Let us have an example of the test suite extended like mentioned above.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletContract</span> {
+
+    <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort
+  
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can create a wallet`</span>() {<span style="color:#f92672">..</span>.}
+  
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can add a pass to a wallet`</span>() {<span style="color:#f92672">..</span>.}
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can get wallet by id`</span>() {<span style="color:#f92672">..</span>.}
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can debit pass points`</span>() {<span style="color:#f92672">..</span>.}
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can not debit more than balance`</span>() {<span style="color:#f92672">..</span>.}
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can not debit pass when not found`</span>() {<span style="color:#f92672">..</span>.} 
+}
+</code></pre></div><p>Now our previous logic test looks like this.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletLogicTest</span>: CardWalletContract() {
+  
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort = 
+        CardWalletLogic(InMemoryCardWalletStorage())
+}
+</code></pre></div><p>The component responsible for the HTTP adapter would ideally need to
+comply with the contract test (the abstract test suite) we defined above.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletHttpTest</span>: CardWalletContract() {
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> httpServer: Http4kServer = 
+        CardWalletWebController(InMemoryCardWallet())
+          .withFilter(ServerFilters.CatchLensFailure())
+          .asServer(SunHttp(<span style="color:#ae81ff">0</span>))
+
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort =
+        CardWalletHttpClientFactory
+          .ofUri(<span style="color:#e6db74">&#34;http://localhost:</span><span style="color:#e6db74">${httpServer.port()}</span><span style="color:#e6db74">&#34;</span>)
+
+    <span style="color:#a6e22e">@BeforeEach</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">setUp</span>() {
+        httpServer.start()
+    }
+
+    <span style="color:#a6e22e">@AfterEach</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">tearDown</span>() {
+        httpServer.stop()
+    }
+}
+</code></pre></div><blockquote>
+<p><em>The <code>InMemoryCardWallet</code> is a quick way to construct the logic
+against an in-memory storage.</em></p>
+</blockquote>
+<p>There is an idea behind making sure to test the behaviour of an api
+rather than its implementation details due to their nature of changing
+more frequently. The more value we add to that single test suite, the
+more important it becomes to make sure all adapters comply with it.</p>
+<p>Here&rsquo;s a <a href="https://github.com/pagidas/ports-and-adapters-demo">link</a> to project&rsquo;s repository on Github.</p>
+<p>Hope you enjoyed 😄</p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Integration tests with testcontainers</title>
+            <link>https://pagidas.github.io/posts/testcontainers_demo/</link>
+            <pubDate>Sun, 27 Jun 2021 14:15:01 +0100</pubDate>
+            
+            <guid>https://pagidas.github.io/posts/testcontainers_demo/</guid>
+            <description>Lately&amp;hellip; Not a new thing, but lately I&amp;rsquo;ve been trying to focus more on testing the behaviour of an application rather than its implementation details. Those details are variable; so our behavioural test (Integration test?) shouldn&amp;rsquo;t depend on them.
+For example if our application exposes a RESTful CRUD api, storing the resource into some database &amp;ndash; changing the library used to connect to the database and run queries at it, must not change the fact that our application should still behave the same.</description>
+            <content type="html"><![CDATA[<h3 id="lately">Lately&hellip;</h3>
+<p>Not a new thing, but lately I&rsquo;ve been trying to focus more on testing the behaviour of an
+application rather than its implementation details. Those details are variable; so our
+behavioural test (Integration test?) shouldn&rsquo;t depend on them.</p>
+<p>For example if our application exposes a RESTful CRUD api, storing the resource into
+some database &ndash; changing the library used to connect to the database and run queries at it,
+must not change the fact that our application should still behave the same.</p>
+<p>I&rsquo;m not a fan of <em>mocking</em> external dependencies into my tests, especially if the application
+is heavy on them. I prefer a &ldquo;test through the wire&rdquo;, one that does a real connection.</p>
+<p>It feels like a <code>docker-compose</code> context would be perfect for such testing&hellip;</p>
+<p>I hope you know this already, but if you don&rsquo;t, there is a very interesting library
+wrapping <em><strong>Docker</strong></em> commands, which we can use to set our environment with docker containers
+ready for our testing. And all that programmatically within our test source code.
+And, yes, of course I&rsquo;m talking about <a href="https://www.testcontainers.org/">Testcontainers</a></p>
+<h3 id="my-demo-app">My Demo app</h3>
+<p>For the sake of this blog post, the demo application I&rsquo;ve designed has
+a variety of dependencies that makes it a bit hard to test overall.</p>
+<p>On a high level, we have a <em><strong>streaming application</strong></em> that processes events
+about files which we need to download from an external api, and then save them
+into an <em><strong>AWS S3</strong></em> bucket.</p>
+<p>The technology I used for the application above is <a href="https://kafka.apache.org/">Kafka</a>,
+and specifically I used the <a href="https://kafka.apache.org/10/documentation/streams/developer-guide/processor-api.html">Processor API</a>
+to create a <em><strong>processor topology</strong></em> to represent my business logic.</p>
+<p>For demoing purposes, the external api from which I download the file to continue the flow,
+I used the <a href="https://www.file.io/">file.io</a> &ndash; in reality it could be any third-party provider.</p>
+<h4 id="topology-graph">Topology graph</h4>
+<p>Our <em><strong>topology graph</strong></em> looks like this
+<img src="images/stream_processing_topology_graph.jpg" alt="image"></p>
+<p>Quite simple, right?</p>
+<p>In code, the DSL describing the above topology is even simpler, once you get
+your hands around <em><strong>Kafka</strong></em></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">KafkaStreams(StreamsBuilder().build().run {
+
+            addSource(SOURCE_NODE,
+                LongDeserializer(),
+                UploadFileEventDeserializer(),
+                UploadFileEvent.topic)
+
+            addProcessor(PROCESSOR_NODE,
+                ProcessorSupplier { UploadFileEventProcessor(fileIOApi, s3Config, s3) },
+                SOURCE_NODE)
+
+            addSink(SINK_SUCCESS_NODE,
+                UploadFileSuccessEvent.topic,
+                LongSerializer(),
+                UploadFileEventBaseSerializer(),
+                PROCESSOR_NODE)
+
+            addSink(SINK_FAILURE_NODE,
+                UploadFileFailureEvent.topic,
+                LongSerializer(),
+                UploadFileEventBaseSerializer(),
+                PROCESSOR_NODE)
+    
+    }, <span style="color:#66d9ef">this</span>.kafkaConfig.toProperties())
+</code></pre></div><p>Our business logic lives into this <code>UploadFileEventProcessor</code> instantiated by <em><strong>Kafka&rsquo;s</strong></em> <code>ProcessorSupplier</code>.</p>
+<h4 id="solution-diagram">Solution diagram</h4>
+<p><img src="images/stream_solution_design.jpg" alt="image"></p>
+<h4 id="setting-up-testcontainers">Setting up Testcontainers</h4>
+<p>First is our gradle imports, and <em><strong>Testcontainers</strong></em> thankfully provides us with a <em><strong>bom</strong></em> we can use,
+so we can have the same version across all libraries for no conflicts.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">implementation platform(<span style="color:#e6db74">&#34;org.testcontainers:testcontainers-bom:</span><span style="color:#e6db74">$testContainersVersion</span><span style="color:#e6db74">&#34;</span>)
+testImplementation <span style="color:#e6db74">&#34;org.testcontainers:kafka&#34;</span>
+testImplementation <span style="color:#e6db74">&#34;org.testcontainers:mockserver&#34;</span>
+</code></pre></div><p>They do also provide specific containers of widely used technologies to abstract the way we spin them up.</p>
+<p>As seen above <code>org.testcontainers:kafka</code> and <code>org.testcontainers:mockserver</code>.</p>
+<p>For other containers that there is no specific module, we can of course use the <code>GenericContainer</code>
+which works as expected, the same way you&rsquo;d create and run an instance of a docker container.</p>
+<p>There are two ways we can use <em><strong>Testcontainers</strong></em> functionality:</p>
+<ol>
+<li>We can let the library handle the containers' lifecycle</li>
+<li>Or we can control it manually.</li>
+</ol>
+<p>For the automated containers' lifecycle control, we have to import another module:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">testImplementation <span style="color:#e6db74">&#34;org.testcontainers:junit-jupiter:</span><span style="color:#e6db74">$junit5Version</span><span style="color:#e6db74">&#34;</span>
+</code></pre></div><p>This adds some annotations where we can use to declare containers that are maintained by the library &ndash; <code>@Container</code>.</p>
+<p>In our own example I use the manual approach to have singleton containers.
+You can read more about the <em><strong>JUnit5 support</strong></em> <a href="https://www.testcontainers.org/test_framework_integration/junit_5/">here</a> 👈</p>
+<p>To setup singleton containers with manual lifecycle control, we have to follow a <em><strong>base class</strong></em> pattern:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">open</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestContainersBase</span> {
+    <span style="color:#66d9ef">companion</span> <span style="color:#66d9ef">object</span> {
+        <span style="color:#75715e">// declare your containers...
+</span><span style="color:#75715e"></span>        
+        <span style="color:#66d9ef">init</span> {
+            <span style="color:#75715e">// start your containers
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// plus whatever is needed for the context to load properly
+</span><span style="color:#75715e"></span>        }
+    }
+}
+</code></pre></div><p>Note how we declare containers that are supported by the framework, and also containers using the <code>GenericContainer</code> type.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> kafkaContainer = KafkaContainer(DockerImageName.parse(<span style="color:#e6db74">&#34;confluentinc/cp-kafka:5.4.3&#34;</span>)).apply { 
+    withExposedPorts(KAFKA_CONTAINER_PORT)
+}
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> mockServerContainer = MockServerContainer(DockerImageName.parse(<span style="color:#e6db74">&#34;mockserver/mockserver&#34;</span>)).apply {
+    withExposedPorts(MOCK_SERVER_CONTAINER_PORT)
+}
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> s3MockContainer = GenericContainer&lt;Nothing&gt;(DockerImageName.parse(<span style="color:#e6db74">&#34;adobe/s3mock&#34;</span>)).apply {
+    withExposedPorts(S3_MOCK_CONTAINER_PORT)
+    withEnv(<span style="color:#e6db74">&#34;initialBuckets&#34;</span>, <span style="color:#e6db74">&#34;file-uploads&#34;</span>)
+}
+</code></pre></div><p>To test that we upload to <em><strong>AWS S3</strong></em> I used <a href="https://github.com/adobe/S3Mock">S3Mock</a>
+but we could use <a href="https://github.com/localstack/localstack">LocalStack</a>.</p>
+<p>Similarly, to test we download the file
+from a third-party api, I used <a href="https://www.mock-server.com/">MockServer</a> but another good alternative is <a href="http://wiremock.org/">Wiremock</a>.
+Both of those solutions we can add pairs of <code>request/response</code> expectations, which sounds like <em>mocking</em>, yet it isn&rsquo;t.
+They both run a real <code>http</code> server.</p>
+<p>Our <code>init {}</code> would simply look like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">init</span> {
+    <span style="color:#75715e">// init containers
+</span><span style="color:#75715e"></span>    kafkaContainer.start()
+    mockServerContainer.start()
+    s3MockContainer.start()
+}
+</code></pre></div><p>Now you may wonder how do we connect to those docker containers when they are started&hellip;</p>
+<p>We already exposed the ports when we declared the containers in the example up above, but those are not the ports that are actually mapped
+into our <code>localhost</code>. Rather, <em><strong>Testcontainers</strong></em> actually exposes them on random free ones to avoid port collisions.</p>
+<p>At runtime, we can ask <em><strong>Testcontainers</strong></em> what is the actual mapped port given the port of the container we declared, like so:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">s3MockContainer.getMappedPort(S3_MOCK_CONTAINER_PORT)
+</code></pre></div><p>As soon as we have the <code>host</code> and <code>port</code> that our docker containers run at, the only thing we are left
+to do is just pass them into our application&rsquo;s config via environment, so we can start testing the behaviour
+of our application.</p>
+<p><img src="images/tests_intellij.png" alt="image"></p>
+<h3 id="github-repo">Github repo</h3>
+<p>The demo application is located here 👇</p>
+<pre><code>https://github.com/pagidas/kotlin-testcontainers-demo
+</code></pre>]]></content>
+        </item>
+        
+        <item>
+            <title>Choreography saga -- asynchronous microservices</title>
+            <link>https://pagidas.github.io/posts/choreography_saga/</link>
+            <pubDate>Mon, 28 Dec 2020 14:19:33 +0200</pubDate>
+            
+            <guid>https://pagidas.github.io/posts/choreography_saga/</guid>
+            <description>Background Well, where to begin&amp;hellip; Saga is a flow of transactions that updates each service and publishes a message to trigger then next transaction step. This pattern is not something new. It came from a paper back in 1987
+On a very high level, Saga does not use a distributed transaction; it breaks down the transaction into a series of local transactions in each one of the participating services.
+Now that microservices architecture is more frequent when orchestrating a system, plain http request/response communication between microservices can be hard to maintain.</description>
+            <content type="html"><![CDATA[<h2 id="background">Background</h2>
+<h3 id="well-where-to-begin">Well, where to begin&hellip;</h3>
+<p><em><strong>Saga</strong></em> is a flow of transactions that updates each service and
+publishes a message to trigger then next transaction step. This pattern
+is not something new. It came from a paper back in <strong>1987</strong></p>
+<p>On a very high level, <em><strong>Saga</strong></em> does not use a <em><strong>distributed transaction</strong></em>;
+it breaks down the transaction into a series of local transactions in each
+one of the participating services.</p>
+<p><img src="./images/saga_transaction.jpg" alt="saga_transaction"></p>
+<p>Now that <em><strong>microservices</strong></em> architecture is more frequent when orchestrating
+a system, plain <code>http request/response</code> communication between microservices can be hard
+to maintain. In fact, it increases <em>coupling</em>, because both of the services
+need to be <em>available</em> at that specific moment for a flow to happen.
+They&rsquo;re bound to the <em>request/response</em> model.</p>
+<h3 id="saga-design-challenges">Saga design challenges</h3>
+<h4 id="api-design">API design</h4>
+<p>Although, a saga internally uses asynchronous communication, the very first step
+that starts the saga might be triggered synchronously, via an <em><strong>http request</strong></em> like so</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-http" data-lang="http"><span style="color:#960050;background-color:#1e0010">POST /orders
+</span></code></pre></div><p>So now we have to cover the issue of <em>when</em> we send back the response.</p>
+<h4 id="implementing-rollbacks">Implementing rollbacks</h4>
+<p>In a <em><strong>distributed transaction</strong></em> you can execute a <code>rollback</code> statement
+that undoes all the updates that have been made so far. But in a saga, given
+that we have <em><strong>local transactions</strong></em> in the services required to execute
+a flow; if one of the steps fails, the steps required before that have already
+committed their changes into their local databases. So we have to explicitly
+undo all that.</p>
+<h4 id="lacking-the-isolation-property-in-acid----acd">Lacking the Isolation property in ACID &ndash; ACD</h4>
+<p>The execution of steps of one saga can interleave with the execution of
+steps of other sagas. That may increase database anomalies such as: <em><strong>dirty reads</strong></em>, etc.
+So we must use countermeasures such as <em><strong>semantic logging</strong></em>, which means
+the <code>state</code> of the <code>Order</code> is <code>PENDING</code> until it becomes <code>APPROVED</code> or <code>REJECTED</code>.</p>
+<h3 id="saga-participants-communication">Saga participants communication</h3>
+<p>As mentioned above, synchronous communication, such as <em><strong>REST</strong></em>, introduces
+<em><strong>temporal coupling</strong></em>, because both client and server need to be available.</p>
+<p>So in sagas it makes more sense to be implemented using
+<em><strong>asynchronous broker-based messaging collaboration</strong></em> where the participants
+communicate through a message broker; that gives us at least once guarantee delivery.</p>
+<p><img src="./images/async_broker_based_messaging.jpg" alt="async_broker_based_messaging"></p>
+<p>If we have those properties, means that even if a saga participant becomes
+unavailable, the message broker is going to keep retrying the delivery of
+that message until the other participant will process it. That guarantees
+the saga will <em><strong>eventually</strong></em> run to completion.</p>
+<h4 id="saga-step">Saga step</h4>
+<p>In such fashion, a saga step is a transaction local to a service.</p>
+<ul>
+<li>Service executes a transaction that updates its database</li>
+<li>And will also send a message or publish an event</li>
+</ul>
+<p>That will trigger the next participant in the saga to execute its own
+local transaction.</p>
+<blockquote>
+<p><em>The interesting thing here is how to make those actions
+in a saga step <em><strong>atomically</strong></em> by not using a <em><strong>distributed transaction</strong></em>.</em></p>
+</blockquote>
+<p><img src="./images/saga_step.jpg" alt="saga_step"></p>
+<h3 id="saga-patterns">Saga patterns</h3>
+<p>A <em><strong>Saga</strong></em> is a sequence of transactions, right? And, mentioned earlier,
+we saw that communication between those transactions are based upon events.
+So the next thought that comes to mind is that, there should be some logic
+somewhere that knows what saga step is executed after another
+&ndash; either a failed or a successful step.</p>
+<p>Here are the two saga patterns based on <em><strong>decision-making</strong></em> aspect:</p>
+<ul>
+<li>Choreography: <em><strong>distributed</strong></em> decision-making</li>
+<li>Orchestration: <em><strong>centralized</strong></em> decision-making</li>
+</ul>
+<p>More details about them <a href="https://microservices.io/patterns/data/saga.html">here</a> 👈</p>
+<h3 id="putting-a-stop-here">Putting a stop here</h3>
+<p>Well this post is not supposed to discuss all the implementation details
+and challenges on how to implement sagas. It would be a book to do that,
+and there are out there already!</p>
+<h2 id="my-demo-app">My demo app</h2>
+<p>I wanted to try to implement a saga on my own, using as much <em><strong>lightweight</strong></em>
+libraries as I could &ndash; to have more control and get more knowledge.</p>
+<p>So the concept is similar to <em><strong>orders-and-customers</strong></em>. The idea is that you
+want to order a <em><strong>pantry_item</strong></em> for which you&rsquo;ve put a quantity limit. For example,
+you can&rsquo;t have more than 4 pieces of broccoli in your pantry at home.</p>
+<p>In that fashion, we have:</p>
+<ul>
+<li>orders</li>
+<li>pantry</li>
+</ul>
+<p><strong>Orders</strong> is the service where you can create/update orders about <strong>pantry_items</strong></p>
+<p><strong>Pantry</strong> is the service that manages if an order about a specific <strong>pantry_item</strong>
+has exceeded its limit or not.</p>
+<p><img src="./images/demo_architecture_design.jpg" alt="demo_architecture_design"></p>
+<h3 id="logs">Logs</h3>
+<p>As seen in the design picture above, the saga starts with a typical
+http request to <em>create a new order</em> The correct way to read the logs is
+to take a look at the <em><strong>pantry logs</strong></em> after reading the in the <em><strong>orders logs</strong></em></p>
+<pre><code>&quot;Pushing to tpic: order-events message: {...}&quot;
+</code></pre><p>After <em><strong>orders</strong></em> publishes a message about the order creation, that&rsquo;s where
+<em><strong>pantry</strong></em> starts its lifecycle, consuming that message.</p>
+<h4 id="orders-service">Orders service</h4>
+<p><img src="./images/orders_logs.png" alt="orders_logs"></p>
+<h4 id="pantry-service">Pantry service</h4>
+<p><img src="./images/pantry_logs.png" alt="pantry_logs"></p>
+<h3 id="github-repo">Github Repo</h3>
+<p>My demo <em><strong>orchestration saga</strong></em> is 👇</p>
+<pre><code>https://github.com/pagidas/kotlin-kafka-choreography-saga
+</code></pre><p>I put as much effort as I could to implement it without using heavyweight frameworks.
+So it&rsquo;s all out there, explicitly, from the <em><strong>kafka consumers/producers</strong></em>, basic
+<em><strong>jdbc</strong></em> for <em><strong>postgresql</strong></em>, up to simple <em><strong>web controllers</strong></em>. The only fancy bit
+might be the use of <em><strong>Kotlin</strong></em> which I find myself playing around with lately.</p>
+<p>I think my demo app, along with the talk I&rsquo;m referencing down below, could be a great start to
+get your hands in <em><strong>sagas</strong></em> and their challenges</p>
+<p>That&rsquo;s it, folks, I hope you enjoyed!</p>
+<h2 id="references">References</h2>
+<p>It&rsquo;s all here! <a href="https://www.youtube.com/watch?v=kyNL7yCvQQc">click me!</a></p>
+<p>An in-depth talk about <em><strong>asynchronous microservices</strong></em> by <em>Chris Richardson</em></p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>A very easy-to-wire-up distributed lock solution for scheduled tasks</title>
+            <link>https://pagidas.github.io/posts/shedlock_poc/</link>
+            <pubDate>Sat, 19 Dec 2020 21:37:07 +0200</pubDate>
+            
+            <guid>https://pagidas.github.io/posts/shedlock_poc/</guid>
+            <description>Shedlock is a very well documented library and has already integrated with SpringBoot and Micronaut way of setting a scheduled task. Usually, these kind of frameworks can schedule a task with just simply applying a decorator/annotation like so @Scheduled on top of your java method.
+Deploying a SpringBoot application or a Micronaut (nowadays) into an orchestration platform like Kubernetes usually brings some issues; these scheduled tasks are bound to the container/vm they&amp;rsquo;re running into.</description>
+            <content type="html"><![CDATA[<p><a href="https://github.com/lukas-krecan/ShedLock">Shedlock</a>
+is a very well documented library and has already integrated with
+<a href="https://spring.io/projects/spring-boot">SpringBoot</a>
+and <a href="https://micronaut.io/">Micronaut</a> way of setting a scheduled task.
+Usually, these kind of frameworks can schedule a task with just simply
+applying a decorator/annotation like so <code>@Scheduled</code> on top of your java
+method.</p>
+<p>Deploying a <code>SpringBoot</code> application or a <code>Micronaut</code> (nowadays) into an
+orchestration platform like <em><strong>Kubernetes</strong></em> usually brings some issues;
+these scheduled tasks are bound to the container/vm they&rsquo;re running into.
+Meaning that, if we have <code>3 replicas</code> of that service that executes a
+<code>@Scheduled</code> task, we will experience that task executing <code>3</code> times &ndash; once per <code>replica</code> of a container.</p>
+<p>On a recent task of mine to implement a scheduled task at my work
+which would call a third-party api to:</p>
+<ul>
+<li>fetch some data</li>
+<li>update some other</li>
+<li>and report (after calling again and checking)</li>
+</ul>
+<p>Obviously, we wouldn&rsquo;t want our scheduled task to execute these routines
+as many times as the <code>replica number</code> of the container inside the Kubernetes cluster.
+Hence, a colleague of mine introduced me to <code>Shedlock</code>.</p>
+<p>As mentioned above, <em><strong>Shedlock</strong></em> already has support on <em><strong>SpringBoot</strong></em>
+and <em><strong>Micronaut</strong></em> so to make it work was no pain at all. The only dependency
+required is a <code>DataSource</code> &ndash; a DB, cache, etc. The list of all the datastores
+that it supports is right <a href="https://github.com/lukas-krecan/ShedLock#configure-lockprovider">here</a></p>
+<pre><code>Mongo
+Redis
+ElasticSearch
+Cassandra
+...
+and many more!
+</code></pre><p>On a high level, <em><strong>Shedlock</strong></em> creates an index/table where the <code>id</code> of the scheduled
+task is <em>locked</em>, and it will make sure that only one of the instances
+will execute the scheduled task. Of course, if one of the instances will fail for any reason,
+the lock will be released for the next available!</p>
+<p><img src="./images/shedlock_high_level.png" alt="high_level_architecture_diagram"></p>
+<p><em><strong>Shedlock</strong></em> needs just another <code>annotation</code> on top of your scheduled task as follows in my example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Scheduled</span><span style="color:#f92672">(</span>fixedDelay <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;5s&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#a6e22e">@SchedulerLock</span><span style="color:#f92672">(</span>name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;say-hello-scheduler&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">schedule</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    assertLocked<span style="color:#f92672">();</span>
+    log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Hello from {}&#34;</span><span style="color:#f92672">,</span> App<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">());</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>along with some extra configuration in <code>application.yml</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">shedlock</span>:
+  <span style="color:#f92672">defaults</span>:
+    <span style="color:#f92672">lock-at-most-for</span>: <span style="color:#ae81ff">8s</span>
+    <span style="color:#f92672">lock-at-least-for</span>: <span style="color:#ae81ff">5s</span>
+</code></pre></div><p>Now the <code>@Scheduled</code> expects a <code>LockProvider</code> to be declared somewhere. Thus, in my example
+where I used <code>Elasticsearch</code> as my datastore, we would have factory bean method like so:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Factory</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SchedulingLockConfiguration</span> <span style="color:#f92672">{</span>
+    
+    <span style="color:#a6e22e">@Singleton</span>
+    LockProvider <span style="color:#a6e22e">lockProvider</span><span style="color:#f92672">(</span>RestHighLevelClient client<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ElasticsearchLockProvider<span style="color:#f92672">(</span>client<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>In the docs of the library you can find factory bean methods for all the
+datastores that currently the library is integrated and supports to build
+the lock.</p>
+<p>Here&rsquo;s the output logs of a demo PoC I did</p>
+<p><img src="./images/proof.png" alt="proof"></p>
+<p>That&rsquo;s it! I hope this blog helped&hellip;</p>
+<p>The repo can be found right here</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">https://github.com/pagidas/shedlock-poc
+</code></pre></div>]]></content>
+        </item>
+        
+        <item>
+            <title>Pilot</title>
+            <link>https://pagidas.github.io/posts/pilot/</link>
+            <pubDate>Sat, 19 Dec 2020 18:07:44 +0200</pubDate>
+            
+            <guid>https://pagidas.github.io/posts/pilot/</guid>
+            <description>We just decided to &amp;ndash; Charlie, The Newsroom, TV Series 2012-2014
+ Well, Charlie was telling his friend, Will, that in the old days they did the news well; how? They just decided to.
+However, I&amp;rsquo;m not going to do any news, nor I will try to teach anything to anybody. I&amp;rsquo;m really new to this. This blog is my attempt to self reflect on the things I&amp;rsquo;m learning throughout my development in software engineering.</description>
+            <content type="html"><![CDATA[<blockquote>
+<p><em>We just decided to &ndash; Charlie, The Newsroom, TV Series 2012-2014</em></p>
+</blockquote>
+<p>Well, <em>Charlie</em> was telling his friend, <em>Will</em>, that in the old days
+they did the news well; how? They just decided to.</p>
+<p>However, I&rsquo;m not going to do any news, nor I will try to teach anything
+to anybody. I&rsquo;m really new to this.
+This blog is my attempt to self reflect on the things I&rsquo;m
+learning throughout my development in software engineering. That does not
+mean I&rsquo;m going to just be talking about tech. I will try to bring other
+aspects of my life as well.</p>
+<hr>
+<p><em>Note to self:</em></p>
+<p>I will try my best and jot down blog posts of thoughts and experiments
+in the tech world.</p>
+<p><em>As I&rsquo;m writing, I&rsquo;m thinking of how this whole <a href="https://gohugo.io/">Hugo</a>
+project is going to be distributed in some corner of the web.</em></p>
+<p>I guess if you ever have the change to read this very blog, means that
+I&rsquo;ve done this successfully! 😌</p>
+]]></content>
+        </item>
+        
+    </channel>
+</rss>

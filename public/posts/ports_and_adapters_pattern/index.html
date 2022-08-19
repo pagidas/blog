@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="So it all began when I moved to another team within the same company. This colleague of mine, when I asked him how the team was like, etc, he said to me in the end, &amp;ldquo;we use the hexagonal architecture here, and you&amp;rsquo;ll see how much power it gives you.&amp;rdquo; Back then, I knew little about the SOLID principles, which is an acronym about best practices in OOP, heavily promoted by Uncle Bob." />
+<meta name="keywords" content=", ports_and_adapters_pattern, hexagonal_architecture, SOLID_principles" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://pagidas.github.io/posts/ports_and_adapters_pattern/" />
+
+
+    <title>
+        
+            Ports and adapters pattern (aka Hexagonal architecture) :: Yet another blog... 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.393856bf2c430bb6c01d7af07c6fe966e7cce8073435cfbbc46e590bab7405ef.css">
+
+
+
+
+
+
+<meta itemprop="name" content="Ports and adapters pattern (aka Hexagonal architecture)">
+<meta itemprop="description" content="So it all began when I moved to another team within the same company. This colleague of mine, when I asked him how the team was like, etc, he said to me in the end, &ldquo;we use the hexagonal architecture here, and you&rsquo;ll see how much power it gives you.&rdquo; Back then, I knew little about the SOLID principles, which is an acronym about best practices in OOP, heavily promoted by Uncle Bob.">
+<meta itemprop="datePublished" content="2021-12-28T17:24:07+00:00" />
+<meta itemprop="dateModified" content="2021-12-28T17:24:07+00:00" />
+<meta itemprop="wordCount" content="2311">
+
+
+
+<meta itemprop="keywords" content="ports_and_adapters_pattern,hexagonal_architecture,SOLID_principles," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Ports and adapters pattern (aka Hexagonal architecture)"/>
+<meta name="twitter:description" content="So it all began when I moved to another team within the same company. This colleague of mine, when I asked him how the team was like, etc, he said to me in the end, &ldquo;we use the hexagonal architecture here, and you&rsquo;ll see how much power it gives you.&rdquo; Back then, I knew little about the SOLID principles, which is an acronym about best practices in OOP, heavily promoted by Uncle Bob."/>
+
+
+
+    <meta property="og:title" content="Ports and adapters pattern (aka Hexagonal architecture)" />
+<meta property="og:description" content="So it all began when I moved to another team within the same company. This colleague of mine, when I asked him how the team was like, etc, he said to me in the end, &ldquo;we use the hexagonal architecture here, and you&rsquo;ll see how much power it gives you.&rdquo; Back then, I knew little about the SOLID principles, which is an acronym about best practices in OOP, heavily promoted by Uncle Bob." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://pagidas.github.io/posts/ports_and_adapters_pattern/" />
+<meta property="article:published_time" content="2021-12-28T17:24:07+00:00" />
+<meta property="article:modified_time" content="2021-12-28T17:24:07+00:00" /><meta property="og:site_name" content="Yet another blog..." />
+
+
+
+
+
+
+    <meta property="article:published_time" content="2021-12-28 17:24:07 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd ~/</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://pagidas.github.io/about">About</a></li><li><a href="https://pagidas.github.io/posts">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        11 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://pagidas.github.io/posts/ports_and_adapters_pattern/">Ports and adapters pattern (aka Hexagonal architecture)</a>
+      </h1>
+
+      
+
+      <div class="post-content">
+        <p>So it all began when I moved to another team within the same company.
+This colleague of mine, when I asked him how the team was like, etc, he said
+to me in the end, &ldquo;we use the hexagonal architecture here, and you&rsquo;ll see
+how much power it gives you.&rdquo; Back then, I knew little about the
+<a href="https://en.wikipedia.org/wiki/SOLID"><strong><em>SOLID</em></strong></a> principles, which
+is an acronym about best practices in OOP, heavily promoted by
+<a href="http://cleancoder.com/products">Uncle Bob</a>.
+Not a long later, I found out how all of these so-called
+best practices were mentioned back in the 1970s.</p>
+<p>The ports and adapters pattern is an architectural pattern invented by
+<a href="https://alistair.cockburn.us/coming-soon/">Alistair Cockburn</a>;
+you can read all about it <a href="https://alistair.cockburn.us/hexagonal-architecture/">here</a> 👈
+It aims at creating loosely coupled application components, that can fix
+undesired dependencies, and domain logic leaking into the user interface
+and vice-versa.</p>
+<h2 id="glossary">Glossary</h2>
+<p><strong><em>Hexagon</em></strong> is our core domain logic that should be isolated from
+the outside world. It should ideally contain no technology-specific
+dependencies; only very lightweight libraries that help with the complexity
+of the domain.</p>
+<p><strong><em>Ports</em></strong> are the interfaces defined, with their respective models,
+to separate the application components.</p>
+<p><strong><em>Adapters</em></strong> are the components that adapt the technology to the interface (port).</p>
+<p>There are at two types of ports, as well as adapters.</p>
+<ul>
+<li><strong><em>Driving</em></strong> ports: interfaces defining how the application is triggered.</li>
+<li><strong><em>Driven</em></strong> ports: interfaces defining how the application communicates with
+the external world.</li>
+</ul>
+<p>In the above fashion, the same goes with the driving/driven adapters</p>
+<p>In a nutshell, we have our <strong><em>hexagon</em></strong> (domain logic) component which
+we want to isolate from the outside world via well-defined <strong><em>ports</em></strong> (interfaces),
+which are then implemented/used by <strong><em>adapter</em></strong> components.</p>
+<blockquote>
+<p><em>Note that the above statement does not encompass all, so make sure you read
+the link to the original pattern if questions arise.</em></p>
+</blockquote>
+<h2 id="how-it-relates-to-solid">How it relates to SOLID</h2>
+<p>The ports and adapters pattern enforces one the <strong><em>SOLID</em></strong> principles due
+to its glossary. <strong><em>Dependency Inversion</em></strong> principle, which states</p>
+<blockquote>
+<p><em>High-level modules should not depend on low-level modules; both should
+depend on abstractions. Abstractions should not depend on details; details
+should depend on abstractions.</em></p>
+</blockquote>
+<p>One thing to clarify is that the dependency direction is not affected when
+applying the above principle; but, because of introducing an abstraction between them,
+we end up with two different dependencies.</p>
+<ul>
+<li>the high-level module depends on the abstraction.</li>
+<li>the low-level module depends on <strong><em>that same</em></strong> abstraction.</li>
+</ul>
+<p>The dependency inversion principle follows naturally when we
+apply <strong><em>Open/closed</em></strong> and the <strong><em>Liskov substitution</em></strong> principles.</p>
+<p>The <strong><em>Open/closed</em></strong> principle requires a software component to be open for
+extension and closed for modification. We can achieve that by introducing an
+abstraction for which we can derive different components. An interface itself
+is closed for modification, but we can extend it by providing new implementations.</p>
+<p>Our implementations on the above principle should follow the <strong><em>Liskov substitution</em></strong>
+principle so that we can replace implementations of an abstraction without
+affecting the behaviour of the application. We can verify this principle when
+our tests exercise the <strong><em>behaviour</em></strong> and not implementation details.</p>
+<h2 id="building-an-application">Building an application</h2>
+<p>Let&rsquo;s try and build an application to understand more about the pattern.
+The theme of the application will be a sort of card wallet software, which can:</p>
+<ul>
+<li>create a wallet</li>
+<li>list all wallets</li>
+<li>add a pass*</li>
+<li>debit a pass*</li>
+</ul>
+<p><code>Pass</code>* - a pass for this example is like those club cards in a super-market containing points.</p>
+<h3 id="design-phase">Design phase</h3>
+<p>My initial attempt to draw out the application ended up quite ineffective, but we are here
+to learn, so I will include them in order to express my thoughts.</p>
+<p><img src="images/initial_design.png" alt="image"></p>
+<p>Now for &ldquo;architectural design&rdquo; <strong><em>V1</em></strong>, there is not really <em>any</em> architecture.
+Not only that but I stared at it confusingly, thinking of what will be my next steps,
+until I had reached to a point where I started adding things that became my <strong><em>V2</em></strong>.</p>
+<p>I see this <strong><em>WebController</em></strong> that makes me think that there is some kind of web
+technology that is associated to the <strong><em>CardWalletLogic</em></strong>. Ok, maybe it <em>uses</em>
+the logic component. So this is probably an HTTP component that when called
+it uses the logic component, which is supposed to be our main application. Then
+we have another thing there, <strong><em>DB</em></strong> which is <em>used</em> by our <strong><em>CardWalletLogic</em></strong>,
+reading/writing data to complete the functionality.</p>
+<p><strong><em>V2</em></strong> seems to be like an architectural design, but the thing that bothers me
+is that out of my confusion, I took technology decisions, only because of my
+inability to continue on designing the application. I also had thoughts on
+how would I test this out; I would need an HTTP server running,
+or I would mock it out; have a db up and running, or again mock it out.
+All in all, I felt I did not have a design that would help me start coding.</p>
+<p>With a bit more focus on the ports and adapters pattern, I came up with the next
+version of the design.</p>
+<p><img src="images/abstractions_design.png" alt="image"></p>
+<p>Trying to make sense of the pattern, I drew two interfaces
+(ports in the glossary of the pattern)</p>
+<ul>
+<li><code>CardWalletPort</code> - driving port.</li>
+<li><code>CardWalletStorage</code> - driven port.</li>
+</ul>
+<p>One that defines how to communicate with the card wallet domain component,
+and one that the domain <em>uses</em> to finish the functionality.
+That leaves us with <code>CardWalletLogic</code> to be an implementation detail,
+which is <em>derived</em> from the interface that defines the shape of
+the domain logic component(the hexagon).</p>
+<blockquote>
+<p><em>For those who do not know already, the filled arrow is a derived association
+(extends) and the empty arrow is a direct association (uses, has, etc.).</em></p>
+</blockquote>
+<p>With this design, I felt much more confident. It also reminded me that
+regardless of what things are out of both interfaces (ports)
+I could safely - and I ought to - start implementing the behaviour
+of the card wallet domain first.</p>
+<p>But I did not, yet!</p>
+<p>My curiosity of my previous mistakes wanted me to
+try and visualize the design with both the abstractions and the technology
+choices I made in the last version.</p>
+<p><img src="images/not_clear_boundaries_design.png" alt="image"></p>
+<p>It took a bit of time to draw out the correct associations, but I made it.</p>
+<ul>
+<li><code>CardWalletWebController</code> - driving adapter.</li>
+<li><code>DatabaseApi</code> - driven adapter.</li>
+</ul>
+<p><code>CardWalletWebController</code> wraps the card wallet domain component
+via the port, which means it <em>has an instance</em> of that interface,
+and adapts HTTP-specific things to it. This is called an adapter
+in the ports and adapters pattern, because it uses the
+<em>adapter software design pattern</em>. Simple, right?
+The other adapter is the <code>DatabaseApi</code> which derives from the
+dependency port of card wallet domain component, adapting domain
+logic into database-specific, acting as the depepdency port itself.</p>
+<p>Another thing that I struggled to grasp is that the pattern talks about
+<em>loosely coupled application components that stop undesired dependencies,
+and contamination of domain logic into the user interface and vice-versa</em>.
+From my last version of the design, I could definitely see the &ldquo;loosely coupling&rdquo;
+being introduced because of the abstractions in place (ports). What I could not
+clearly depict, was the <em>components</em>. There was no clear separation of components,
+i.e. component modularity.</p>
+<p><img src="images/boundaries_design.png" alt="image"></p>
+<p>In the (hopefully) last design version, I attempted to clearly
+place the boundaries so that I could understand the dependencies.
+The design depicts three components:</p>
+<ul>
+<li>the card wallet domain component (hexagon)</li>
+<li>the HTTP adapter component (driving adapter)</li>
+<li>the database adapter component (driven adapter)</li>
+</ul>
+<p>These three components should ideally be three separate modules with their
+own local concerns and dependencies. The design implies that whatever
+changes may happen to adapter modules will not affect the domain module (hexagon).
+This information is understood by the arrowed lines that, crossing the boundaries,
+they point to the same direction, to the most important part of the system.
+The domain logic. The high-level module, card wallet domain, does not directly
+depend on the low-level modules, the adapters, but on abstractions.
+Also, the low-level modules do not directly depend on the high-level module&rsquo;s
+implementation details, but on the domain api.</p>
+<h3 id="coding-phase">Coding phase</h3>
+<p>Let us start by defining the port responsible to talk to our domain component.</p>
+<p>We will focus on the wallet creation capability of the application; but
+we can pair it with the list all wallets functionality so that we can test
+the behaviour solely via the interface.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CardWalletPort</span> {
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">createWallet</span>(walletHolder: String): Wallet
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">list</span>(): List&lt;Wallet&gt;
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletLogicTest</span> {
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort = TODO()
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can create a wallet`</span>() {
+        <span style="color:#66d9ef">val</span> created = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+
+        <span style="color:#66d9ef">val</span> wallets = cardWallet.list()
+
+        assertThat(wallets, equalTo(listOf(created)))
+    }
+}
+</code></pre></div><p>If we remember the ports and adapters pattern, it defines:</p>
+<ul>
+<li>driving ports/adapters</li>
+<li>driven ports/adapters</li>
+</ul>
+<p>The test we wrote in the above block of code, is essentially a
+<strong><em>driving adapter</em></strong>; it drives/triggers the domain logic component.
+It is &ldquo;driving&rdquo; because it targets the driving port, and &ldquo;adapter&rdquo; because it
+asserts the interface is behaving correctly, by running the framework&rsquo;s rules
+engine upon results when delegating calls to the interface.</p>
+<p>Now that we have defined the functionality in the port and a 💥 failing test
+ready to go; let us start implementing the hexagon.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletLogic</span>(
+  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> cardWalletStorage: CardWalletStorage): CardWalletPort {
+  
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">createWallet</span>(walletHolder: String): Wallet =
+        WalletDomain.empty(UUID.randomUUID(), walletHolder)
+            .toDto()
+            .also { newWallet <span style="color:#f92672">-&gt;</span> cardWalletStorage.save(newWallet) }
+
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">list</span>(): List&lt;Wallet&gt; = cardWalletStorage.getAll()
+}
+
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CardWalletStorage</span> {
+  <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">save</span>(wallet: Wallet): Wallet
+  <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">getAll</span>(): List&lt;Wallet&gt;
+}
+</code></pre></div><blockquote>
+<p><em>For simplicity, internals of <code>CardWalletLogic</code> are not included in the demo
+(there will be a link to the GitHub repository)</em></p>
+</blockquote>
+<p>For creating a wallet, we have decided to persist the results into some storage;
+and so we define a driven port as it is an external concern.</p>
+<p><code>toDto()</code> function maps the domain object&rsquo;s model to a data transfer model. This
+is crucial, so we do not end up leaking domain knowledge out of the hexagon.
+If we have a rich domain, and we choose to spread it across domain
+objects, those models must not be part of the api (driving or driven ports),
+rather they should be implementation details of the very hexagon.
+That leaves us using simple data structures for entering or exiting the hexagon.</p>
+<p>Of course, we now need to verify that the domain logic we have coded complies
+with the test we have written in the beginning. The test exercises the behaviour
+of the wallet creation functionality.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletLogicTest</span> {
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort =
+      CardWalletLogic(InMemoryCardWalletStorage())
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can create a wallet`</span>() {
+        <span style="color:#66d9ef">val</span> created = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+
+        <span style="color:#66d9ef">val</span> wallets = cardWallet.list()
+
+        assertThat(wallets, equalTo(listOf(created)))
+    }
+}
+</code></pre></div><p>Our test is green ✅ 🎉</p>
+<p>Because at this point we are just focusing on the business domain, we have added an
+in-memory storage implementation, <code>InMemoryCardWalletStorage</code>, for the driven port.</p>
+<p>Now it is simply a matter of implementing all the rest of capabilities our
+domain application is supposed to do.</p>
+<p><strong><em>TDD intensifies&hellip;</em></strong></p>
+<p><strong><em>fast-forward some time later&hellip;</em></strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletLogicTest</span>() {
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort = 
+        CardWalletLogic(InMemoryCardWalletStorage())
+  
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can create a wallet`</span>() {
+        <span style="color:#66d9ef">val</span> created = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+
+        <span style="color:#66d9ef">val</span> wallets = cardWallet.list()
+
+        assertThat(wallets, equalTo(listOf(created)))
+    }
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can add a pass to a wallet`</span>() {
+        <span style="color:#66d9ef">val</span> wallet = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+        <span style="color:#66d9ef">val</span> newPass = PassBuilder().build()
+
+        <span style="color:#66d9ef">val</span> updatedWallet = cardWallet.addPass(wallet.id, newPass)
+        <span style="color:#66d9ef">val</span> foundPass = updatedWallet.passes.find { <span style="color:#66d9ef">it</span>.id <span style="color:#f92672">==</span> newPass.id }
+
+        assertThat(foundPass, equalTo(newPass))
+    }
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can get wallet by id`</span>() {
+        <span style="color:#66d9ef">val</span> existed = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+
+        <span style="color:#66d9ef">val</span> found = cardWallet.getWalletById(existed.id)
+
+        assertThat(found, equalTo(existed))
+    }
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can debit pass points`</span>() {
+        <span style="color:#66d9ef">val</span> pass = PassBuilder(points = <span style="color:#ae81ff">70</span>).build()
+        <span style="color:#66d9ef">val</span> wallet = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+            .run { cardWallet.addPass(id, pass) }
+
+        <span style="color:#66d9ef">val</span> result =  cardWallet.debitPass(wallet.id, pass.id, <span style="color:#ae81ff">50</span>)
+
+        assertThat((result.<span style="color:#66d9ef">get</span>() <span style="color:#66d9ef">as</span> Pass).points, equalTo(<span style="color:#ae81ff">20</span>))
+    }
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can not debit more than balance`</span>() {
+        <span style="color:#66d9ef">val</span> pass = PassBuilder(points = <span style="color:#ae81ff">50</span>).build()
+        <span style="color:#66d9ef">val</span> wallet = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+            .run { cardWallet.addPass(id, pass) }
+
+        <span style="color:#66d9ef">val</span> result =  cardWallet.debitPass(wallet.id, pass.id, <span style="color:#ae81ff">51</span>)
+
+        <span style="color:#66d9ef">val</span> error = WalletErrorBuilder.ofPass(pass)
+            .withNotEnoughPointsIssue(debitAmount = <span style="color:#ae81ff">51</span>, balance = <span style="color:#ae81ff">50</span>)
+            .build()
+        assertThat(result.<span style="color:#66d9ef">get</span>() <span style="color:#66d9ef">as</span> WalletError, equalTo(error))
+    }
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can not debit pass when not found`</span>() { 
+      <span style="color:#66d9ef">val</span> wallet = cardWallet.createWallet(<span style="color:#e6db74">&#34;John Doe&#34;</span>)
+      <span style="color:#66d9ef">val</span> pass = PassBuilder(points = <span style="color:#ae81ff">50</span>).build()
+    
+      <span style="color:#66d9ef">val</span> result = cardWallet.debitPass(wallet.id, pass.id, <span style="color:#ae81ff">50</span>)
+    
+      <span style="color:#66d9ef">val</span> error = WalletErrorBuilder.ofPass(pass)
+          .withPassNotFoundIssue()
+          .build()
+      assertThat(result.<span style="color:#66d9ef">get</span>() <span style="color:#66d9ef">as</span> WalletError, equalTo(error))
+    }
+}
+</code></pre></div><p>We have managed to build all the card wallet domain application functionalities,
+with a mixture of happy and unhappy path scenarios passing ✅ 🎉</p>
+<p>Implementing the rest of the modules (driving and driven adapters) are not demonstrated
+since the essence of this demo is to focus on the domain first of all.</p>
+<h3 id="testing-strategy">Testing strategy</h3>
+<p>Since the architectural pattern guides as in terms of putting the right abstractions
+in place; we can extend this even to our testing approach. We can define the test
+suite as another abstraction that implementors (driving/driven adapters in our case)
+can construct the system under test (SUT) in whatever ways, exercising that with the
+given adapting technologies the api still behaves as it supposed to be.</p>
+<p>Let us have an example of the test suite extended like mentioned above.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletContract</span> {
+
+    <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort
+  
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can create a wallet`</span>() {<span style="color:#f92672">..</span>.}
+  
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can add a pass to a wallet`</span>() {<span style="color:#f92672">..</span>.}
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can get wallet by id`</span>() {<span style="color:#f92672">..</span>.}
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can debit pass points`</span>() {<span style="color:#f92672">..</span>.}
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can not debit more than balance`</span>() {<span style="color:#f92672">..</span>.}
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">`can not debit pass when not found`</span>() {<span style="color:#f92672">..</span>.} 
+}
+</code></pre></div><p>Now our previous logic test looks like this.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletLogicTest</span>: CardWalletContract() {
+  
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort = 
+        CardWalletLogic(InMemoryCardWalletStorage())
+}
+</code></pre></div><p>The component responsible for the HTTP adapter would ideally need to
+comply with the contract test (the abstract test suite) we defined above.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardWalletHttpTest</span>: CardWalletContract() {
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> httpServer: Http4kServer = 
+        CardWalletWebController(InMemoryCardWallet())
+          .withFilter(ServerFilters.CatchLensFailure())
+          .asServer(SunHttp(<span style="color:#ae81ff">0</span>))
+
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">val</span> cardWallet: CardWalletPort =
+        CardWalletHttpClientFactory
+          .ofUri(<span style="color:#e6db74">&#34;http://localhost:</span><span style="color:#e6db74">${httpServer.port()}</span><span style="color:#e6db74">&#34;</span>)
+
+    <span style="color:#a6e22e">@BeforeEach</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">setUp</span>() {
+        httpServer.start()
+    }
+
+    <span style="color:#a6e22e">@AfterEach</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">tearDown</span>() {
+        httpServer.stop()
+    }
+}
+</code></pre></div><blockquote>
+<p><em>The <code>InMemoryCardWallet</code> is a quick way to construct the logic
+against an in-memory storage.</em></p>
+</blockquote>
+<p>There is an idea behind making sure to test the behaviour of an api
+rather than its implementation details due to their nature of changing
+more frequently. The more value we add to that single test suite, the
+more important it becomes to make sure all adapters comply with it.</p>
+<p>Here&rsquo;s a <a href="https://github.com/pagidas/ports-and-adapters-demo">link</a> to project&rsquo;s repository on Github.</p>
+<p>Hope you enjoyed 😄</p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://pagidas.github.io/tags/ports_and_adapters_pattern/">ports_and_adapters_pattern</a></span>
+        <span class="tag"><a href="https://pagidas.github.io/tags/hexagonal_architecture/">hexagonal_architecture</a></span>
+        <span class="tag"><a href="https://pagidas.github.io/tags/solid_principles/">SOLID_principles</a></span>
+        
+    </p>
+
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        2311 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2021-12-28 17:24
+        
+
+         
+          
+        
+      </p>
+    </div>
+
+    
+      <div class="pagination">
+        <div class="pagination__title">
+          <span class="pagination__title-h">Read other posts</span>
+          <hr />
+        </div>
+
+        <div class="pagination__buttons">
+          
+
+          
+            <span class="button next">
+              <a href="https://pagidas.github.io/posts/testcontainers_demo/">
+                <span class="button__text">Integration tests with testcontainers</span>
+                <span class="button__icon">→</span>
+              </a>
+            </span>
+          
+        </div>
+      </div>
+    
+
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2022</span>
+            
+            
+                <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+            <span><a href="https://pagidas.github.io/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">Djordje Atlialp</a></span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.dc716e9092c9820b77f96da294d0120aeeb189b5bcea9752309ebea27fd53bbe6b13cffb2aca8ecf32525647ceb7001f76091de4199ac5a3caa432c070247f5b.js" integrity="sha512-3HFukJLJggt3&#43;W2ilNASCu6xibW86pdSMJ6&#43;on/VO75rE8/7KsqOzzJSVkfOtwAfdgkd5BmaxaPKpDLAcCR/Ww=="></script>
+
+
+
+    </body>
+</html>

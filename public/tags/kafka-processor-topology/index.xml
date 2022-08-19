@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kafka processor topology on Yet another blog...</title>
+    <link>https://pagidas.github.io/tags/kafka-processor-topology/</link>
+    <description>Recent content in kafka processor topology on Yet another blog...</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Sun, 27 Jun 2021 14:15:01 +0100</lastBuildDate><atom:link href="https://pagidas.github.io/tags/kafka-processor-topology/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Integration tests with testcontainers</title>
+      <link>https://pagidas.github.io/posts/testcontainers_demo/</link>
+      <pubDate>Sun, 27 Jun 2021 14:15:01 +0100</pubDate>
+      
+      <guid>https://pagidas.github.io/posts/testcontainers_demo/</guid>
+      <description>Lately&amp;hellip; Not a new thing, but lately I&amp;rsquo;ve been trying to focus more on testing the behaviour of an application rather than its implementation details. Those details are variable; so our behavioural test (Integration test?) shouldn&amp;rsquo;t depend on them.
+For example if our application exposes a RESTful CRUD api, storing the resource into some database &amp;ndash; changing the library used to connect to the database and run queries at it, must not change the fact that our application should still behave the same.</description>
+    </item>
+    
+  </channel>
+</rss>

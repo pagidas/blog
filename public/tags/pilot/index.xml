@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>pilot on Yet another blog...</title>
+    <link>https://pagidas.github.io/tags/pilot/</link>
+    <description>Recent content in pilot on Yet another blog...</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Sat, 19 Dec 2020 18:07:44 +0200</lastBuildDate><atom:link href="https://pagidas.github.io/tags/pilot/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Pilot</title>
+      <link>https://pagidas.github.io/posts/pilot/</link>
+      <pubDate>Sat, 19 Dec 2020 18:07:44 +0200</pubDate>
+      
+      <guid>https://pagidas.github.io/posts/pilot/</guid>
+      <description>We just decided to &amp;ndash; Charlie, The Newsroom, TV Series 2012-2014
+ Well, Charlie was telling his friend, Will, that in the old days they did the news well; how? They just decided to.
+However, I&amp;rsquo;m not going to do any news, nor I will try to teach anything to anybody. I&amp;rsquo;m really new to this. This blog is my attempt to self reflect on the things I&amp;rsquo;m learning throughout my development in software engineering.</description>
+    </item>
+    
+  </channel>
+</rss>
