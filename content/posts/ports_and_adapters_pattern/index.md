@@ -444,7 +444,7 @@ against an in-memory storage.*
 
 There is an idea behind making sure to test the behaviour of an api
 rather than its implementation details due to their nature of changing
-more frequently. The move value we add to that single test suite, the 
+more frequently. The more value we add to that single test suite, the 
 more important it becomes to make sure all adapters comply with it.
 
 Here's a [link](https://github.com/pagidas/ports-and-adapters-demo) to project's repository on Github.
